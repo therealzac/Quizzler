@@ -23997,11 +23997,14 @@
 
 	var React = __webpack_require__(1),
 	    Navbar = __webpack_require__(207),
-	    StartButton = __webpack_require__(208);
+	    Quiz = __webpack_require__(208);
 
 	var App = React.createClass({
 	  displayName: 'App',
 
+	  componentDidMount: function () {
+	    ApiU;
+	  },
 	  render: function () {
 	    return React.createElement(
 	      'div',
@@ -24011,7 +24014,7 @@
 	        { className: 'header' },
 	        React.createElement(Navbar, { className: 'header' })
 	      ),
-	      React.createElement(StartButton, null)
+	      React.createElement(Quiz, null)
 	    );
 	  }
 	});
@@ -24067,19 +24070,35 @@
 
 	var React = __webpack_require__(1);
 
-	var StartButton = React.createClass({
-	  displayName: "StartButton",
+	var Quiz = React.createClass({
+	  displayName: "Quiz",
 
+	  getInitialState: function () {
+	    return { startButtonClass: "start-button", quizClass: "hidden" };
+	  },
+	  handleClick: function () {
+	    this.setState({ startButtonClass: "hidden", quizClass: "quiz" });
+	  },
 	  render: function () {
 	    return React.createElement(
 	      "div",
-	      { className: "start-button" },
-	      React.createElement("img", { src: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQsqoVToJaalEM8Uq1E-P5AolKGr5NmPx1tuzUs-Nw4CNL0K0Vf" })
+	      null,
+	      React.createElement(
+	        "div",
+	        { className: this.state.startButtonClass },
+	        React.createElement("img", { onClick: this.handleClick, src: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQsqoVToJaalEM8Uq1E-P5AolKGr5NmPx1tuzUs-Nw4CNL0K0Vf" })
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: this.state.quizClass },
+	        "this.state.questions.map(function (question) ",
+	        ");"
+	      )
 	    );
 	  }
 	});
 
-	module.exports = StartButton;
+	module.exports = Quiz;
 
 /***/ }
 /******/ ]);

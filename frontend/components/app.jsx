@@ -1,8 +1,11 @@
 var React = require('react'),
     Navbar = require('./navbar.jsx'),
-    StartButton = require('./startButton.jsx');
+    Quiz = require('./quiz.jsx');
 
 var App = React.createClass({
+  componentDidMount: function() {
+    ApiU
+  },
   render: function () {
     return (
       <div>
@@ -10,7 +13,7 @@ var App = React.createClass({
           <Navbar className="header"/>
         </div>
 
-        <StartButton/>
+        <Quiz/>
       </div>
     )
   }
