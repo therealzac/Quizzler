@@ -23995,7 +23995,9 @@
 /* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
+	var React = __webpack_require__(1),
+	    Navbar = __webpack_require__(207),
+	    StartButton = __webpack_require__(208);
 
 	var App = React.createClass({
 	  displayName: 'App',
@@ -24004,12 +24006,80 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      'hello test'
+	      React.createElement(
+	        'div',
+	        { className: 'header' },
+	        React.createElement(Navbar, { className: 'header' })
+	      ),
+	      React.createElement(StartButton, null)
 	    );
 	  }
 	});
 
 	module.exports = App;
+
+/***/ },
+/* 207 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var Navbar = React.createClass({
+	  displayName: "Navbar",
+
+	  render: function () {
+	    return React.createElement(
+	      "div",
+	      { className: "navbar" },
+	      React.createElement(
+	        "ul",
+	        null,
+	        React.createElement(
+	          "li",
+	          { className: "logo" },
+	          "App Academy Quizzler"
+	        ),
+	        React.createElement(
+	          "li",
+	          { className: "quiz-name" },
+	          "Ruby quiz"
+	        ),
+	        React.createElement(
+	          "li",
+	          { className: "header-right" },
+	          "4/5 questions answered"
+	        ),
+	        React.createElement(
+	          "li",
+	          { className: "header-right" },
+	          "Time remaining: 1:00"
+	        )
+	      )
+	    );
+	  }
+	});
+
+	module.exports = Navbar;
+
+/***/ },
+/* 208 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var StartButton = React.createClass({
+	  displayName: "StartButton",
+
+	  render: function () {
+	    return React.createElement(
+	      "div",
+	      { className: "start-button" },
+	      React.createElement("img", { src: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQsqoVToJaalEM8Uq1E-P5AolKGr5NmPx1tuzUs-Nw4CNL0K0Vf" })
+	    );
+	  }
+	});
+
+	module.exports = StartButton;
 
 /***/ }
 /******/ ]);

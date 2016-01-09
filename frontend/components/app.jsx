@@ -1,9 +1,17 @@
-var React = require('react');
+var React = require('react'),
+    Navbar = require('./navbar.jsx'),
+    StartButton = require('./startButton.jsx');
 
 var App = React.createClass({
   render: function () {
     return (
-      <div>hello test</div>
+      <div>
+        <div className="header">
+          <Navbar className="header"/>
+        </div>
+
+        <StartButton/>
+      </div>
     )
   }
 });

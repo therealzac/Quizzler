@@ -1,0 +1,39 @@
+
+
+.navbar {
+  position: relative;
+  width: calc(100% - 60px);
+  max-width: 1140px;
+  margin: auto;
+  padding: 30px;
+  font-family: "Lato", sans-serif;
+  /*display: inline-block;*/
+  /*text-align: center;*/
+}
+
+.header {
+  width: 100%;
+  position: relative;
+  color: #fff;
+  background: #C00A0A;
+  z-index: 1;
+}
+
+.logo {
+  float: left;
+  font-size: 20px;
+}
+
+.quiz-name {
+  list-style-type: none;
+  display: inline-block;
+  padding-left: 270px;
+}
+
+.header-right {
+  list-style-type: none;
+  float: right;
+  display: inline;
+  vertical-align: middle;
+  padding-left: 30px;
+}
