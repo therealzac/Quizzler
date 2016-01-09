@@ -24002,9 +24002,7 @@
 	var App = React.createClass({
 	  displayName: 'App',
 
-	  componentDidMount: function () {
-	    ApiU;
-	  },
+	  componentDidMount: function () {},
 	  render: function () {
 	    return React.createElement(
 	      'div',

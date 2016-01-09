@@ -4,7 +4,6 @@ var React = require('react'),
 
 var App = React.createClass({
   componentDidMount: function() {
-    ApiU
   },
   render: function () {
     return (
