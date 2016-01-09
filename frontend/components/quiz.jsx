@@ -2,10 +2,27 @@ var React = require('react');
 
 var Quiz = React.createClass({
   getInitialState: function () {
-    return { startButtonClass: "start-button", quizClass: "hidden" };
+    return {
+      startButtonClass: "start-button",
+      quizClass: "hidden",
+      quiz: {}
+     };
   },
   handleClick: function () {
     this.setState({ startButtonClass: "hidden", quizClass: "quiz" });
+  },
+  componentDidMount: function() {
+    this.quizListener = QuizStore.addListener(this._onChange);
+  },
+  componentWillUnmount: function() {
+    this.quizListener.remove();
+  },
+  _onChange: function() {
+    var quiz = QuizStore.quiz();
+
+    this.setState({
+      quiz: quiz
+    })
   },
   render: function () {
     return (
@@ -15,7 +32,8 @@ var Quiz = React.createClass({
         </div>
 
         <div className={this.state.quizClass}>
-          this.state.questions.map(function (question) {
+          this.state.quiz.questions.map(function (question) {
+            return <Question question={question}/>
           });
 
 
