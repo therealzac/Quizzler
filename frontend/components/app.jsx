@@ -4,6 +4,7 @@ var React = require('react'),
 
 var App = React.createClass({
   componentDidMount: function() {
+    apiUtil.fetchQuiz(1);
   },
   render: function () {
     return (
@@ -13,6 +14,7 @@ var App = React.createClass({
         </div>
 
         <Quiz/>
+        
       </div>
     )
   }

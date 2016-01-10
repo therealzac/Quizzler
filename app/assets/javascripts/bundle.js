@@ -23997,12 +23997,14 @@
 
 	var React = __webpack_require__(1),
 	    Navbar = __webpack_require__(207),
-	    Quiz = __webpack_require__(208);
+	    Quiz = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./quiz.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 	var App = React.createClass({
 	  displayName: 'App',
 
-	  componentDidMount: function () {},
+	  componentDidMount: function () {
+	    apiUtil.fetchQuiz(1);
+	  },
 	  render: function () {
 	    return React.createElement(
 	      'div',
@@ -24061,42 +24063,6 @@
 	});
 
 	module.exports = Navbar;
-
-/***/ },
-/* 208 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-
-	var Quiz = React.createClass({
-	  displayName: "Quiz",
-
-	  getInitialState: function () {
-	    return { startButtonClass: "start-button", quizClass: "hidden" };
-	  },
-	  handleClick: function () {
-	    this.setState({ startButtonClass: "hidden", quizClass: "quiz" });
-	  },
-	  render: function () {
-	    return React.createElement(
-	      "div",
-	      null,
-	      React.createElement(
-	        "div",
-	        { className: this.state.startButtonClass },
-	        React.createElement("img", { onClick: this.handleClick, src: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQsqoVToJaalEM8Uq1E-P5AolKGr5NmPx1tuzUs-Nw4CNL0K0Vf" })
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: this.state.quizClass },
-	        "this.state.questions.map(function (question) ",
-	        ");"
-	      )
-	    );
-	  }
-	});
-
-	module.exports = Quiz;
 
 /***/ }
 /******/ ]);
