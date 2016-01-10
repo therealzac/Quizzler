@@ -10,5 +10,22 @@ apiUtil = {
         console.log(error);
       }
     });
+  },
+
+  submitAnswer: function(questionId, answerChoice) {
+    $.ajax({
+      url: "answer_choices",
+      method: "POST",
+      data: {
+        question_id: questionId,
+        answer_choice: answerChoice
+      },
+      success: function(questionResult) {
+        ApiActions.receiveQuestionResult(questionResult, questionId);
+      },
+      error: function(error) {
+        console.log(error.message);
+      }
+    })
   }
 }

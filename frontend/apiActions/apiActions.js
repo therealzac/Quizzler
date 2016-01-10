@@ -7,5 +7,13 @@ module.exports = {
       actionType: QuizConstants.QUIZ_RECIEVED,
       quiz: quiz
     });
+  },
+
+  receiveQuestionResult: function(questionResult, questionId) {
+    AppDispatcher.dispatch({
+      actionType: "QUESTION_RESULT_RECIEVED",
+      questioResult: questionResult,
+      questionId: questionid
+    });
   }
 }

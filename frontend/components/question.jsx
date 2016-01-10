@@ -1,18 +1,34 @@
 var React = require('react');
+var QuestionResultStore = require('../stores/QuestionResultStore');
 
 var Question = React.createClass({
   getInitialState: function() {
     return({
-      answerChoice: "";
+      answerChoice: "",
+      questionResult: null
     })
+  },
+  componentDidMount: function() {
+    this.questionResultStoreListener = QuestionResultStore.addListnener(this._onChange);
+  },
+  componentWillUnmount: function() {
+    this.questionResultStoreListener.remove();
+  },
+  _onChange: function() {
+    questionResult = QuestionResultStore.all()[this.props.question.id];
+    if (questionResult) {
+      this.setState({
+        questionResult: questionResult
+      })
+    };
   },
   showAnswerBody: function() {
     if (this.props.question.type === "multiple choice") {
-      return multipleChoiceAnswerBody();
+      return this.multipleChoiceAnswerBody();
     } else if (this.props.question.type === "true false") {
-      return trueFalseAnswerBody();
+      return this.trueFalseAnswerBody();
     } else if (this.props.question.type === "fill in the blank") {
-      return fillInTheBlankAnswerBody();
+      return this.fillInTheBlankAnswerBody();
     }
   },
   multipleChoiceAnswerBody: function() {
@@ -61,11 +77,30 @@ var Question = React.createClass({
   },
   updateAnswerChoice: function(e) {
     this.setState({answerChoice: e.target.value});
-  }
+  },
+
   submitAnswer: function(e) {
     e.preventDefault();
     ApiUtil.submitAnswer(this.props.question.id, this.state.answerChoice);
   },
+
+  buttonOrResult: function () {
+    if (!this.state.questionResult) {
+      return (
+      <button
+        className="submit-answer-button"
+        onClick={this.submitAnswer}>
+        Submit
+      </button>
+    )} else {
+      return (
+        <div>
+          {this.state.questionResult.correctAnswer}
+          {this.state.questionResult.explanation}
+        </div>
+      )
+    }
+  }
 
   render: function() {
     return(
@@ -75,11 +110,7 @@ var Question = React.createClass({
         </div>
         <div className="answer-body">
           {this.showAnswerBody()}
-          <button
-            className="submit-answer-button"
-            onClick={this.submitAnswer}>
-            Submit
-          </button>
+          {this.buttonOrResult()}
         </div>
       </div>
     )
