@@ -1,4 +1,4 @@
 json.extract!(
-  quiz,
+  @quiz,
   :title, :day, :max_time, :number_of_questions, :questions, :answers
 )

@@ -1,0 +1,56 @@
+<h3>Create a new quiz</h3>
+<br>
+
+<form action="<%= quizzes_url %>" method="post">
+
+    <input
+      type="hidden"
+      name="authenticity_token"
+      value="<%= form_authenticity_token %>">
+
+
+    <label for="quiz_title">Quiz Title</label>
+    <input type="text"
+           name="quiz[title]"
+           style="border: solid 2px #969696;"
+           value="<%= @quiz.title %>">
+    <br>
+    <label for="quiz_day">Quiz Day:  Ex. "W1D1"</label>
+    <input type="text"
+           name="quiz[day]"
+           style="border: solid 2px #969696;"
+           value="<%= @quiz.day %>">
+     <br>
+     <label for="quiz_max_time">Minutes allowed:   Ex. 60</label>
+     <input type="text"
+            name="quiz[max_time]"
+            style="border: solid 2px #969696;"
+            value="<%= @quiz.max_time %>">
+      <br>
+      <label for="quiz_number_of_questions">Number of questions on the quiz:</label>
+      <input type="text"
+             name="quiz[number_of_questions]"
+             style="border: solid 2px #969696;"
+             value="<%= @quiz.number_of_questions %>">
+
+      <br>
+
+
+
+    <input type="submit" value="Submit Quiz"
+            style=" background-color:#44c767;
+                  	-moz-border-radius:28px;
+                  	-webkit-border-radius:28px;
+                  	border-radius:28px;
+                  	border:1px solid #18ab29;
+                  	display:inline-block;
+                  	cursor:pointer;
+                  	color:#ffffff;
+                  	font-family:Arial;
+                  	font-size:17px;
+                  	padding:16px 31px;
+                  	text-decoration:none;
+                  	text-shadow:0px 1px 0px #2f6627;">
+  </form>
+
+</form>

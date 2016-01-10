@@ -1,0 +1,31 @@
+<h3>Quizzes</h3>
+
+<% @quizzes.each do |quiz| %>
+<br>
+<div style="border: 3px solid black;border-radius:5px;margin:5px;width:300px">
+     <a style="color:blue;"
+        href="http://localhost:3000/quizzes/admin_show/<%= quiz.id %>/"> <%= quiz.title %> </a>
+    <br>
+    <label>Number of Questions:</label>
+    <%= quiz.number_of_questions %>
+    <br>
+    <label>Quiz Day:</label>
+    <%= quiz.day %>
+    <br>
+    <label>Time Allowed:</label>
+    <%= quiz.max_time %>
+  </div>
+
+  <% end %>
+  <br>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+
+Back to Album
+</a>

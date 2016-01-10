@@ -1,0 +1,36 @@
+
+<%= @quiz.title %> </a>
+<br>
+<label>Number of Questions:</label>
+<%= @quiz.number_of_questions %>
+<br>
+<label>Quiz Day:</label>
+<%= @quiz.day %>
+<br>
+<label>Time Allowed:</label>
+<%= @quiz.max_time %>
+
+
+<% @quiz.questions.each do |question| %>
+  <div class='quiz-admin-show-individual' style="border: 3px solid black;border-radius:5px;margin:5px;"
+    <br>
+    <br>
+    Question:
+    <%= question.text%>
+      <div class="answers" style="margin-left:30px;">
+        <% question.answers.each do |answer| %>
+        <br>
+        Answer:
+        <%= answer.text %>
+        <% if answer.id === question.correct_answer_id %>
+        <%= "Correct Answer" %>
+        <% end %>
+        <br>
+        <% end %>
+    </div>
+
+  </div>
+
+  <a style="color:blue;"
+     href="/quizzes/<%= @quiz.id %>/question/new"> Add a Question </a>
+<% end%>
