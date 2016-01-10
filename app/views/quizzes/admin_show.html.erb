@@ -12,7 +12,7 @@
 
 
 <% @quiz.questions.each do |question| %>
-  <div class='quiz-admin-show-individual' style="border: 3px solid black;border-radius:5px;margin:5px;"
+  <div class='quiz-admin-show-individual' style="border: 3px solid black;border-radius:5px;margin:5px;width:500px;"
     <br>
     <br>
     Question:
@@ -28,9 +28,12 @@
         <br>
         <% end %>
     </div>
-
+    
   </div>
-
   <a style="color:blue;"
-     href="/quizzes/<%= @quiz.id %>/question/new"> Add a Question </a>
+  href="/quizzes/<%= @quiz.id %>/questions/<%=question.id%>/answers/new"> Add an Answer </a>
 <% end%>
+<br>
+
+<a style="color:blue;"
+href="/quizzes/<%= @quiz.id %>/questions/new"> Add a Question </a>

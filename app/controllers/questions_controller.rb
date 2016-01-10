@@ -1,52 +1,45 @@
-class QuizzesController < ApplicationController
+class QuestionsController < ApplicationController
 
   def new
-    @quiz = Quiz.new
-  end
+    @question = Question.new
 
-# this is a custom route, to view all of the tests in a clickable fashion
-  def admin_index
-    @quizzes = Quiz.all
-    render :admin_index
-
+    @question.quiz_id = params[:quiz_id]
   end
 
   def index
-    @quizzes = Quiz.all
+    @questionzes = Question.all
     render :index
   end
 
   def create
-    @quiz = Quiz.new(quiz_params)
+    @question = Question.new(question_params)
 
 
-    if @quiz.save
-      redirect_to admin_index_quizzes_url
+    if @question.save
+      url_string = '/quizzes/admin_show/' + @question.quiz_id.to_s + '/'
+      redirect_to url_string
     else
-      render json: @quiz.errors.full_messages, status: 422
+      render json: @question.errors.full_messages, status: 422
     end
   end
 
     def show
 
-      @quiz = Quiz.find(params[:id])
+      @question = Question.find(params[:id])
     end
 
-    def admin_show
-        @quiz = Quiz.find(params[:id])
-    end
 
     def destroy
-     @quiz = Quiz.find(params[:id])
-     @quiz.destroy
+     @question = Question.find(params[:id])
+     @question.destroy
      render :show
     end
 
   private
 
-  def quiz_params
-    params.require(:quiz).permit(
-      :title, :day, :max_time, :number_of_questions
+  def question_params
+    params.require(:question).permit(
+      :question_type, :quiz_id, :text, :correct_answer_id, :explanation
     )
   end
 end

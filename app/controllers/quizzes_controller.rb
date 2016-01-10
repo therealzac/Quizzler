@@ -33,6 +33,7 @@ class QuizzesController < ApplicationController
     end
 
     def admin_show
+
         @quiz = Quiz.find(params[:id])
     end
 
