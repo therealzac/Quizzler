@@ -1,25 +1,19 @@
 .navbar {
   position: relative;
-  width: calc(100% - 60px);
-  max-width: 1140px;
-  margin: auto;
-  padding: 30px;
-  font-family: "Lato", sans-serif;
-  /*display: inline-block;*/
-  /*text-align: center;*/
-}
-
-.header {
-  width: 100%;
-  position: relative;
-  color: #fff;
+  display: inline-block;
+  color: white;
+  font-family: "Lato";
+  font-weight: bold;
   background: #C00A0A;
-  z-index: 1;
+  width: 100%;
+  height: auto;
 }
 
 .logo {
   float: left;
-  font-size: 20px;
+  padding: 30px;
+  padding-left: 100px;
+  font-size: 24px;
 }
 
 .quiz-name {
@@ -31,7 +25,12 @@
 .header-right {
   list-style-type: none;
   float: right;
+  padding-right: 100px;
+  padding-top: 36px;
+}
+
+.header-right li {
+  font-size: 18px;
   display: inline;
-  vertical-align: middle;
-  padding-left: 30px;
+  padding-left: 75px;
 }

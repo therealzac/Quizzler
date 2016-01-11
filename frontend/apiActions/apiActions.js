@@ -11,7 +11,7 @@ module.exports = {
   receiveQuestionResult: function(questionResult) {
     AppDispatcher.dispatch({
       actionType: QuizConstants.QUESTION_RESULT_RECIEVED,
-      questioResult: questionResult,
+      questionResult: questionResult,
     });
   }
 }

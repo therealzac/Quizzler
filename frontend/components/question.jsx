@@ -1,6 +1,7 @@
 var React = require('react');
 var QuestionResultStore = require('../stores/questionResultStore');
 var ApiUtil = require('../apiUtil/apiUtil.js');
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
 var Question = React.createClass({
   getInitialState: function() {
@@ -45,8 +46,8 @@ var Question = React.createClass({
               name={that.props.question.id}
               type="radio"
               value={answer.id}>
-              {answer.text}
-            </input><br/>
+            </input>
+            <label htmlFor={answer.id}> {answer.text}</label>
           </div>
         )
       })
@@ -65,8 +66,8 @@ var Question = React.createClass({
               name={that.props.question.id}
               type="radio"
               value={answer.id}>
-              {answer.text}
-            </input><br/>
+            </input>
+            <label htmlFor={answer.id}> {answer.text}</label>
           </div>
         )
       })
@@ -105,27 +106,50 @@ var Question = React.createClass({
   buttonOrResult: function () {
     if (!this.state.questionResult) {
       return (
-      <button
-        className="submit-answer-button"
-        onClick={this.submitAnswer}>
-        Submit
-      </button>
-    )} else {
-      return (
-        <div>
-          {this.state.questionResult.is_correct ? "Correct!" : "Wrong!"}<br/>
-          The correct answer was: {this.state.questionResult.correct_answer.text}<br/>
-          Explanation: {this.state.questionResult.explanation}
-        </div>
+        <button
+          className="submit-button"
+          onClick={this.submitAnswer}>
+          Submit
+        </button>
       )
+    } else {
+      if (this.state.questionResult.is_correct) {
+        return (
+          <ReactCSSTransitionGroup transitionName="reveal-answer"
+                                   transitionAppear={true}
+                                   transitionAppearTimeout={0}
+                                   transitionEnterTimeout={0}
+                                   transitionLeaveTimeout={0}>
+            <div key={this.state.questionResult.correct_answer_id}>
+              <span className="correct">Correct!</span><br/><br/>
+              <span className="explanation">{this.state.questionResult.explanation}</span>
+            </div>
+          </ReactCSSTransitionGroup>
+        )
+      } else {
+        return (
+          <ReactCSSTransitionGroup transitionName="reveal-answer"
+                                   transitionAppear={true}
+                                   transitionAppearTimeout={0}
+                                   transitionEnterTimeout={0}
+                                   transitionLeaveTimeout={0}>
+            <div key={this.state.questionResult.correct_answer_id}>
+              <span className="incorrect">Incorrect!</span><br/><br/>
+              Correct answer: {this.state.questionResult.correct_answer.text}<br/>
+              <span className="explanation">{this.state.questionResult.explanation}</span>
+            </div>
+          </ReactCSSTransitionGroup>
+        )
+      }
     }
   },
   render: function() {
     return (
       <div className="question">
         <div className="question-text">
-          {this.props.question.text}
+          <b>{this.props.number}.</b> {this.props.question.text}
         </div>
+        <br/>
         <div className="answer-body">
           {this.showAnswerBody()}
           <br/>

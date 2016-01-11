@@ -1,3 +1,39 @@
 // Place all the styles related to the Quizzes controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+@import url("https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic");
+
+.quiz {
+  font-family: "Lato";
+  padding: 30px 100px 100px 100px;
+}
+
+.quiz-title {
+  font-family: "Lato";
+  font-size: 24px;
+  padding-top: 50px;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+.submit-button {
+  color: white;
+  display: inline-block;
+  background: #1485CC;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.correct {
+  font-weight: bold;
+  color: green;
+}
+
+.incorrect {
+  font-weight: bold;
+  color: #C00A0A;
+}
+
+.explanation {
+  font-style: italic;
+}
