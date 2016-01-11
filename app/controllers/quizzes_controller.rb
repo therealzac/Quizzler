@@ -40,7 +40,7 @@ class QuizzesController < ApplicationController
     def destroy
      @quiz = Quiz.find(params[:id])
      @quiz.destroy
-     render :show
+     redirect_to '/quizzes/admin_index/'
     end
 
   private
