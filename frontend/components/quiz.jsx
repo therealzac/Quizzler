@@ -10,7 +10,7 @@ var Quiz = React.createClass({
       startButtonClass: "start-button",
       quizOpen: false,
       modalOpen: false,
-      quiz: {},
+      quiz: QuizStore.quiz(),
       questionResults: {}
      };
   },
@@ -38,9 +38,14 @@ var Quiz = React.createClass({
     if (!this.state.quizOpen){
       return "";
     } else {
-      this.state.quiz.questions.map(function (question) {
-        return <Question question={question}/>
-      });
+      return (this.state.quiz.questions.map(function (question, idx) {
+        return (
+          <div>
+            <span>{idx + 1}. </span>
+            <Question key={idx} question={question}/>
+          </div>
+        )
+      }));
     }
   },
   renderModal: function () {

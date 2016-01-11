@@ -24083,7 +24083,7 @@
 	      startButtonClass: "start-button",
 	      quizOpen: false,
 	      modalOpen: false,
-	      quiz: {},
+	      quiz: QuizStore.quiz(),
 	      questionResults: {}
 	    };
 	  },
@@ -24111,8 +24111,18 @@
 	    if (!this.state.quizOpen) {
 	      return "";
 	    } else {
-	      this.state.quiz.questions.map(function (question) {
-	        return React.createElement(Question, { question: question });
+	      return this.state.quiz.questions.map(function (question, idx) {
+	        return React.createElement(
+	          'div',
+	          null,
+	          React.createElement(
+	            'span',
+	            null,
+	            idx + 1,
+	            '. '
+	          ),
+	          React.createElement(Question, { key: idx, question: question })
+	        );
 	      });
 	    }
 	  },
@@ -30863,6 +30873,7 @@
 
 	var React = __webpack_require__(1);
 	var QuestionResultStore = __webpack_require__(231);
+	var ApiUtil = __webpack_require__(233);
 
 	var Question = React.createClass({
 	  displayName: 'Question',
@@ -30874,7 +30885,7 @@
 	    };
 	  },
 	  componentDidMount: function () {
-	    this.questionResultStoreListener = QuestionResultStore.addListnener(this._onChange);
+	    this.questionResultStoreListener = QuestionResultStore.addListener(this._onChange);
 	  },
 	  componentWillUnmount: function () {
 	    this.questionResultStoreListener.remove();
@@ -30888,20 +30899,21 @@
 	    };
 	  },
 	  showAnswerBody: function () {
-	    if (this.props.question.type === "multiple choice") {
+	    if (this.props.question.question_type === "multiple choice") {
 	      return this.multipleChoiceAnswerBody();
-	    } else if (this.props.question.type === "true false") {
+	    } else if (this.props.question.question_type === "true false") {
 	      return this.trueFalseAnswerBody();
-	    } else if (this.props.question.type === "fill in the blank") {
+	    } else if (this.props.question.question_type === "fill in the blank") {
 	      return this.fillInTheBlankAnswerBody();
 	    }
 	  },
 	  multipleChoiceAnswerBody: function () {
 	    var that = this;
-	    return that.props.question.answers.map(function (answer) {
+	    return that.props.question.answers.map(function (answer, idx) {
 	      return React.createElement(
 	        'input',
 	        {
+	          key: idx,
 	          className: 'multiple-choice-answer',
 	          onClick: that.updateAnswerChoice,
 	          name: that.props.question.id,
@@ -30986,8 +30998,11 @@
 	        'div',
 	        { className: 'answer-body' },
 	        this.showAnswerBody(),
+	        React.createElement('br', null),
 	        this.buttonOrResult()
-	      )
+	      ),
+	      React.createElement('br', null),
+	      React.createElement('br', null)
 	    );
 	  }
 	});

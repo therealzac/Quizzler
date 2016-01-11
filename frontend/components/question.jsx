@@ -1,5 +1,6 @@
 var React = require('react');
 var QuestionResultStore = require('../stores/questionResultStore');
+var ApiUtil = require('../apiUtil/apiUtil.js');
 
 var Question = React.createClass({
   getInitialState: function() {
@@ -9,7 +10,7 @@ var Question = React.createClass({
     })
   },
   componentDidMount: function() {
-    this.questionResultStoreListener = QuestionResultStore.addListnener(this._onChange);
+    this.questionResultStoreListener = QuestionResultStore.addListener(this._onChange);
   },
   componentWillUnmount: function() {
     this.questionResultStoreListener.remove();
@@ -23,20 +24,21 @@ var Question = React.createClass({
     };
   },
   showAnswerBody: function() {
-    if (this.props.question.type === "multiple choice") {
+    if (this.props.question.question_type === "multiple choice") {
       return this.multipleChoiceAnswerBody();
-    } else if (this.props.question.type === "true false") {
+    } else if (this.props.question.question_type === "true false") {
       return this.trueFalseAnswerBody();
-    } else if (this.props.question.type === "fill in the blank") {
+    } else if (this.props.question.question_type === "fill in the blank") {
       return this.fillInTheBlankAnswerBody();
     }
   },
   multipleChoiceAnswerBody: function() {
     var that = this;
     return (
-      that.props.question.answers.map(function(answer) {
+      that.props.question.answers.map(function(answer, idx) {
         return (
           <input
+            key={idx}
             className="multiple-choice-answer"
             onClick={that.updateAnswerChoice}
             name={that.props.question.id}
@@ -113,8 +115,10 @@ var Question = React.createClass({
         </div>
         <div className="answer-body">
           {this.showAnswerBody()}
+          <br/>
           {this.buttonOrResult()}
         </div>
+        <br/><br/>
       </div>
     )
   }
