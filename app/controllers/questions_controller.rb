@@ -7,7 +7,7 @@ class QuestionsController < ApplicationController
   end
 
   def index
-    @questionzes = Question.all
+    @questions = Question.all
     render :index
   end
 
@@ -26,6 +26,16 @@ class QuestionsController < ApplicationController
     def show
 
       @question = Question.find(params[:id])
+    end
+
+    def update
+      @question = Question.find(params[:id])
+
+      if @question.update(question_params)
+        redirect_to '/quizzes/admin_show/' + @question.quiz_id.to_s + '/'
+      else
+        render :edit
+      end
     end
 
 
