@@ -1,5 +1,5 @@
 var React = require('react');
-var QuestionResultStore = require('../stores/QuestionResultStore');
+var QuestionResultStore = require('../stores/questionResultStore');
 
 var Question = React.createClass({
   getInitialState: function() {
@@ -32,36 +32,42 @@ var Question = React.createClass({
     }
   },
   multipleChoiceAnswerBody: function() {
+    var that = this;
     return (
-      this.props.question.answers.map(function(answer) {
+      that.props.question.answers.map(function(answer) {
         return (
           <input
             className="multiple-choice-answer"
-            onClick={this.updateAnswerChoice}
-            name={this.props.question.id}
+            onClick={that.updateAnswerChoice}
+            name={that.props.question.id}
             type="radio"
             value={answer.text}>
             {answer.text}
+          </input>
         )
-      }.bind(this))
-    );
+      })
+    )
   },
   trueFalseAnswerBody: function() {
     return (
-      <input
-        className="true-false-answer"
-        onClick={this.updateAnswerChoice}
-        name={this.props.question.id}
-        type="radio"
-        value="true">
-        True
-      <input
-        className="true-false-answer"
-        onClick={this.updateAnswerChoice}
-        name={this.props.question.id}
-        type="radio"
-        value="false">
-        False
+      <div>
+        <input
+          className="true-false-answer"
+          onClick={this.updateAnswerChoice}
+          name={this.props.question.id}
+          type="radio"
+          value="true">
+          True
+        </input>
+        <input
+          className="true-false-answer"
+          onClick={this.updateAnswerChoice}
+          name={this.props.question.id}
+          type="radio"
+          value="false">
+          False
+        </input>
+      </div>
     );
   },
   fillInTheBlankAnswerBody: function() {
@@ -78,12 +84,10 @@ var Question = React.createClass({
   updateAnswerChoice: function(e) {
     this.setState({answerChoice: e.target.value});
   },
-
   submitAnswer: function(e) {
     e.preventDefault();
     ApiUtil.submitAnswer(this.props.question.id, this.state.answerChoice);
   },
-
   buttonOrResult: function () {
     if (!this.state.questionResult) {
       return (
@@ -100,10 +104,9 @@ var Question = React.createClass({
         </div>
       )
     }
-  }
-
+  },
   render: function() {
-    return(
+    return (
       <div className="question">
         <div className="question-text">
           {this.props.question.text}

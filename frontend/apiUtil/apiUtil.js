@@ -1,7 +1,9 @@
-apiUtil = {
+var ApiActions = require('../apiActions/apiActions.js');
+
+var ApiUtil = {
   fetchQuiz: function (id) {
     $.ajax({
-      url: "quiz/" + id,
+      url: "quizzes/" + id,
       method: "GET",
       success: function (quiz) {
         ApiActions.recieveQuiz(quiz);
@@ -11,7 +13,6 @@ apiUtil = {
       }
     });
   },
-
   submitAnswer: function(questionId, answerChoice) {
     $.ajax({
       url: "answer_choices",
@@ -29,3 +30,5 @@ apiUtil = {
     })
   }
 }
+
+module.exports = ApiUtil;

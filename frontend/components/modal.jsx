@@ -12,7 +12,7 @@ var Modal = React.createClass({
     var numberOfQuestions = questionKeys.length;
 
     return (
-      {"" + numberOfCorrectAnswers + " / " + numberOfQuestions}
+      numberOfCorrectAnswers + " / " + numberOfQuestions
     )
   },
   render: function() {
@@ -32,3 +32,5 @@ var Modal = React.createClass({
     </div>
   }
 })
+
+module.exports = Modal;

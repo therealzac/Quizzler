@@ -1,6 +1,6 @@
 var React = require('react');
 var QuizStore = require('../stores/quizStore');
-var QuestionResultStore = require('../stores/questionResultsStore');
+var QuestionResultStore = require('../stores/questionResultStore');
 var Question = require('./question.jsx');
 var Modal = require('./modal.jsx');
 
@@ -11,7 +11,7 @@ var Quiz = React.createClass({
       quizOpen: false,
       modalOpen: false,
       quiz: {},
-      questionResults = {}
+      questionResults: {}
      };
   },
   handleClick: function () {
