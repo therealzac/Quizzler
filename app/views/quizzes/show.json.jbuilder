@@ -11,7 +11,6 @@ json.questions @quiz.questions do |question|
   json.question_type question.question_type
   json.quiz_id question.quiz_id
   json.text question.text
-  json.correct_answer_id question.correct_answer_id
   json.explanation question.explanation
 
   json.answers question.answers do |answer|

@@ -13,16 +13,15 @@ var ApiUtil = {
       }
     });
   },
-  submitAnswer: function(questionId, answerChoice) {
+  submitAnswer: function(answerParams, callback) {
     $.ajax({
       url: "answer_choices",
       method: "POST",
       data: {
-        question_id: questionId,
-        answer_choice: answerChoice
+        answer_choice: answerParams
       },
       success: function(questionResult) {
-        ApiActions.receiveQuestionResult(questionResult, questionId);
+        callback(questionResult);
       },
       error: function(error) {
         console.log(error.message);

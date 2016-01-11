@@ -37,40 +37,40 @@ var Question = React.createClass({
     return (
       that.props.question.answers.map(function(answer, idx) {
         return (
-          <input
-            key={idx}
-            className="multiple-choice-answer"
-            onClick={that.updateAnswerChoice}
-            name={that.props.question.id}
-            type="radio"
-            value={answer.text}>
-            {answer.text}
-          </input>
+          <div key={idx}>
+            <input
+              id={answer.id}
+              className="multiple-choice-answer"
+              onClick={that.updateAnswerChoice}
+              name={that.props.question.id}
+              type="radio"
+              value={answer.id}>
+              {answer.text}
+            </input><br/>
+          </div>
         )
       })
     )
   },
   trueFalseAnswerBody: function() {
+    var that = this;
     return (
-      <div>
-        <input
-          className="true-false-answer"
-          onClick={this.updateAnswerChoice}
-          name={this.props.question.id}
-          type="radio"
-          value="true">
-          True
-        </input>
-        <input
-          className="true-false-answer"
-          onClick={this.updateAnswerChoice}
-          name={this.props.question.id}
-          type="radio"
-          value="false">
-          False
-        </input>
-      </div>
-    );
+      that.props.question.answers.map(function(answer, idx) {
+        return (
+          <div key={idx}>
+            <input
+              id={answer.id}
+              className="multiple-choice-answer"
+              onClick={that.updateAnswerChoice}
+              name={that.props.question.id}
+              type="radio"
+              value={answer.id}>
+              {answer.text}
+            </input><br/>
+          </div>
+        )
+      })
+    )
   },
   fillInTheBlankAnswerBody: function() {
     return (
@@ -88,7 +88,19 @@ var Question = React.createClass({
   },
   submitAnswer: function(e) {
     e.preventDefault();
-    ApiUtil.submitAnswer(this.props.question.id, this.state.answerChoice);
+
+    var answerParams = {
+      user_id: 1,
+      answer_id: this.state.answerChoice
+    }
+
+    ApiUtil.submitAnswer(answerParams, this.revealAnswer);
+  },
+  revealAnswer: function (result) {
+    this.setState({questionResult: result})
+    for (var i = 0; i < result.answers.length; i++) {
+      document.getElementById(result.answers[i].id).disabled = true;
+    }
   },
   buttonOrResult: function () {
     if (!this.state.questionResult) {
@@ -101,8 +113,9 @@ var Question = React.createClass({
     )} else {
       return (
         <div>
-          {this.state.questionResult.correctAnswer}
-          {this.state.questionResult.explanation}
+          {this.state.questionResult.is_correct ? "Correct!" : "Wrong!"}<br/>
+          The correct answer was: {this.state.questionResult.correct_answer.text}<br/>
+          Explanation: {this.state.questionResult.explanation}
         </div>
       )
     }

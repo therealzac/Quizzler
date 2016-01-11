@@ -24114,14 +24114,14 @@
 	      return this.state.quiz.questions.map(function (question, idx) {
 	        return React.createElement(
 	          'div',
-	          null,
+	          { key: idx },
 	          React.createElement(
 	            'span',
 	            null,
 	            idx + 1,
 	            '. '
 	          ),
-	          React.createElement(Question, { key: idx, question: question })
+	          React.createElement(Question, { question: question })
 	        );
 	      });
 	    }
@@ -30865,6 +30865,7 @@
 
 	module.exports = {
 	  QUIZ_RECIEVED: "QUIZ_RECIEVED"
+	  // QUESTION_RESULT_RECIEVED: "QUESTION_RESULT_RECIEVED"
 	};
 
 /***/ },
@@ -30911,43 +30912,43 @@
 	    var that = this;
 	    return that.props.question.answers.map(function (answer, idx) {
 	      return React.createElement(
-	        'input',
-	        {
-	          key: idx,
-	          className: 'multiple-choice-answer',
-	          onClick: that.updateAnswerChoice,
-	          name: that.props.question.id,
-	          type: 'radio',
-	          value: answer.text },
-	        answer.text
+	        'div',
+	        { key: idx },
+	        React.createElement(
+	          'input',
+	          {
+	            id: answer.id,
+	            className: 'multiple-choice-answer',
+	            onClick: that.updateAnswerChoice,
+	            name: that.props.question.id,
+	            type: 'radio',
+	            value: answer.id },
+	          answer.text
+	        ),
+	        React.createElement('br', null)
 	      );
 	    });
 	  },
 	  trueFalseAnswerBody: function () {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'input',
-	        {
-	          className: 'true-false-answer',
-	          onClick: this.updateAnswerChoice,
-	          name: this.props.question.id,
-	          type: 'radio',
-	          value: 'true' },
-	        'True'
-	      ),
-	      React.createElement(
-	        'input',
-	        {
-	          className: 'true-false-answer',
-	          onClick: this.updateAnswerChoice,
-	          name: this.props.question.id,
-	          type: 'radio',
-	          value: 'false' },
-	        'False'
-	      )
-	    );
+	    var that = this;
+	    return that.props.question.answers.map(function (answer, idx) {
+	      return React.createElement(
+	        'div',
+	        { key: idx },
+	        React.createElement(
+	          'input',
+	          {
+	            id: answer.id,
+	            className: 'multiple-choice-answer',
+	            onClick: that.updateAnswerChoice,
+	            name: that.props.question.id,
+	            type: 'radio',
+	            value: answer.id },
+	          answer.text
+	        ),
+	        React.createElement('br', null)
+	      );
+	    });
 	  },
 	  fillInTheBlankAnswerBody: function () {
 	    return React.createElement(
@@ -30965,7 +30966,19 @@
 	  },
 	  submitAnswer: function (e) {
 	    e.preventDefault();
-	    ApiUtil.submitAnswer(this.props.question.id, this.state.answerChoice);
+
+	    var answerParams = {
+	      user_id: 1,
+	      answer_id: this.state.answerChoice
+	    };
+
+	    ApiUtil.submitAnswer(answerParams, this.revealAnswer);
+	  },
+	  revealAnswer: function (result) {
+	    this.setState({ questionResult: result });
+	    for (var i = 0; i < result.answers.length; i++) {
+	      document.getElementById(result.answers[i].id).disabled = true;
+	    }
 	  },
 	  buttonOrResult: function () {
 	    if (!this.state.questionResult) {
@@ -30980,7 +30993,12 @@
 	      return React.createElement(
 	        'div',
 	        null,
-	        this.state.questionResult.correctAnswer,
+	        this.state.questionResult.is_correct ? "Correct!" : "Wrong!",
+	        React.createElement('br', null),
+	        'The correct answer was: ',
+	        this.state.questionResult.correct_answer.text,
+	        React.createElement('br', null),
+	        'Explanation: ',
 	        this.state.questionResult.explanation
 	      );
 	    }
@@ -31103,16 +31121,15 @@
 	      }
 	    });
 	  },
-	  submitAnswer: function (questionId, answerChoice) {
+	  submitAnswer: function (answerParams, callback) {
 	    $.ajax({
 	      url: "answer_choices",
 	      method: "POST",
 	      data: {
-	        question_id: questionId,
-	        answer_choice: answerChoice
+	        answer_choice: answerParams
 	      },
 	      success: function (questionResult) {
-	        ApiActions.receiveQuestionResult(questionResult, questionId);
+	        callback(questionResult);
 	      },
 	      error: function (error) {
 	        console.log(error.message);
@@ -31135,14 +31152,6 @@
 	    AppDispatcher.dispatch({
 	      actionType: QuizConstants.QUIZ_RECIEVED,
 	      quiz: quiz
-	    });
-	  },
-
-	  receiveQuestionResult: function (questionResult, questionId) {
-	    AppDispatcher.dispatch({
-	      actionType: "QUESTION_RESULT_RECIEVED",
-	      questioResult: questionResult,
-	      questionId: questionid
 	    });
 	  }
 	};

@@ -40,9 +40,9 @@ var Quiz = React.createClass({
     } else {
       return (this.state.quiz.questions.map(function (question, idx) {
         return (
-          <div>
+          <div key={idx}>
             <span>{idx + 1}. </span>
-            <Question key={idx} question={question}/>
+            <Question question={question}/>
           </div>
         )
       }));
