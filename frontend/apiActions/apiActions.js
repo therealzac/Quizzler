@@ -8,10 +8,10 @@ module.exports = {
       quiz: quiz
     });
   },
-  // receiveQuestionResult: function(questionResult) {
-  //   AppDispatcher.dispatch({
-  //     actionType: QuizConstants.QUESTION_RESULT_RECIEVED,
-  //     questioResult: questionResult,
-  //   });
-  // }
+  receiveQuestionResult: function(questionResult) {
+    AppDispatcher.dispatch({
+      actionType: QuizConstants.QUESTION_RESULT_RECIEVED,
+      questioResult: questionResult,
+    });
+  }
 }

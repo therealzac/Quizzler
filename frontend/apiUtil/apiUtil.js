@@ -13,7 +13,7 @@ var ApiUtil = {
       }
     });
   },
-  submitAnswer: function(answerParams, callback) {
+  submitAnswer: function(answerParams, revealAnswerCallback) {
     $.ajax({
       url: "answer_choices",
       method: "POST",
@@ -21,7 +21,8 @@ var ApiUtil = {
         answer_choice: answerParams
       },
       success: function(questionResult) {
-        callback(questionResult);
+        revealAnswerCallback(questionResult);
+        ApiActions.receiveQuestionResult(questionResult);
       },
       error: function(error) {
         console.log(error.message);

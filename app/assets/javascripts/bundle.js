@@ -24003,9 +24003,6 @@
 	var App = React.createClass({
 	  displayName: 'App',
 
-	  componentDidMount: function () {
-	    ApiUtil.fetchQuiz(1);
-	  },
 	  render: function () {
 	    return React.createElement(
 	      'div',
@@ -24027,36 +24024,58 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var QuizStore = __webpack_require__(209);
+	var ApiUtil = __webpack_require__(233);
 
 	var Navbar = React.createClass({
-	  displayName: "Navbar",
+	  displayName: 'Navbar',
 
+	  getInitialState: function () {
+	    return {
+	      quiz: {},
+	      questionsAnswered: 0
+	    };
+	  },
+	  componentDidMount: function () {
+	    this.quizListener = QuizStore.addListener(this._onChange);
+	    ApiUtil.fetchQuiz(1);
+	  },
+	  _onChange: function () {
+	    this.setState({
+	      quiz: QuizStore.quiz(),
+	      questionsAnswered: QuizStore.questionsAnswered()
+	    });
+	  },
 	  render: function () {
 	    return React.createElement(
-	      "div",
-	      { className: "navbar" },
+	      'div',
+	      { className: 'navbar' },
 	      React.createElement(
-	        "ul",
+	        'ul',
 	        null,
 	        React.createElement(
-	          "li",
-	          { className: "logo" },
-	          "App Academy Quizzler"
+	          'li',
+	          { className: 'logo' },
+	          'App Academy Quizzler'
 	        ),
 	        React.createElement(
-	          "li",
-	          { className: "quiz-name" },
-	          "Ruby quiz"
+	          'li',
+	          { className: 'quiz-name' },
+	          'Ruby quiz'
 	        ),
 	        React.createElement(
-	          "li",
-	          { className: "header-right" },
-	          "4/5 questions answered"
+	          'li',
+	          { className: 'header-right' },
+	          this.state.questionsAnswered,
+	          '/',
+	          this.state.quiz.number_of_questions,
+	          ' questions answered'
 	        ),
 	        React.createElement(
-	          "li",
-	          { className: "header-right" },
-	          "Time remaining: 1:00"
+	          'li',
+	          { className: 'header-right' },
+	          'Time remaining: ',
+	          this.state.quiz.max_time
 	        )
 	      )
 	    );
@@ -24175,19 +24194,32 @@
 	var QuizConstants = __webpack_require__(229);
 
 	var _quiz = {};
+	var _questionsAnswered = 0;
 
 	var resetQuiz = function (quiz) {
 	  _quiz = quiz;
+	};
+
+	var incrementQuestionsAnswered = function () {
+	  _questionsAnswered += 1;
 	};
 
 	QuizStore.quiz = function () {
 	  return _quiz;
 	};
 
+	QuizStore.questionsAnswered = function () {
+	  return _questionsAnswered;
+	};
+
 	QuizStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case QuizConstants.QUIZ_RECIEVED:
 	      resetQuiz(payload.quiz);
+	      QuizStore.__emitChange();
+	      break;
+	    case QuizConstants.QUESTION_RESULT_RECIEVED:
+	      incrementQuestionsAnswered();
 	      QuizStore.__emitChange();
 	      break;
 	  }
@@ -30864,8 +30896,8 @@
 /***/ function(module, exports) {
 
 	module.exports = {
-	  QUIZ_RECIEVED: "QUIZ_RECIEVED"
-	  // QUESTION_RESULT_RECIEVED: "QUESTION_RESULT_RECIEVED"
+	  QUIZ_RECIEVED: "QUIZ_RECIEVED",
+	  QUESTION_RESULT_RECIEVED: "QUESTION_RESULT_RECIEVED"
 	};
 
 /***/ },
@@ -31121,7 +31153,7 @@
 	      }
 	    });
 	  },
-	  submitAnswer: function (answerParams, callback) {
+	  submitAnswer: function (answerParams, revealAnswerCallback) {
 	    $.ajax({
 	      url: "answer_choices",
 	      method: "POST",
@@ -31129,7 +31161,8 @@
 	        answer_choice: answerParams
 	      },
 	      success: function (questionResult) {
-	        callback(questionResult);
+	        revealAnswerCallback(questionResult);
+	        ApiActions.receiveQuestionResult(questionResult);
 	      },
 	      error: function (error) {
 	        console.log(error.message);
@@ -31152,6 +31185,12 @@
 	    AppDispatcher.dispatch({
 	      actionType: QuizConstants.QUIZ_RECIEVED,
 	      quiz: quiz
+	    });
+	  },
+	  receiveQuestionResult: function (questionResult) {
+	    AppDispatcher.dispatch({
+	      actionType: QuizConstants.QUESTION_RESULT_RECIEVED,
+	      questioResult: questionResult
 	    });
 	  }
 	};

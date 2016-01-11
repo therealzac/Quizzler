@@ -4,18 +4,13 @@ var React = require('react'),
     ApiUtil = require('../apiUtil/apiUtil.js');
 
 var App = React.createClass({
-  componentDidMount: function() {
-    ApiUtil.fetchQuiz(1);
-  },
   render: function () {
     return (
       <div>
         <div className="header">
           <Navbar className="header"/>
         </div>
-
         <Quiz/>
-
       </div>
     )
   }
