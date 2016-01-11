@@ -7,6 +7,7 @@ var Question = React.createClass({
   getInitialState: function() {
     return({
       answerChoice: "",
+      answerText: "",
       questionResult: null
     })
   },
@@ -75,32 +76,51 @@ var Question = React.createClass({
   },
   fillInTheBlankAnswerBody: function() {
     return (
-      <input
-        className="fill-in-the-blank-answer"
-        onClick={this.updateAnswerChoice}
-        type="text"
-        onChange={this.updateAnswerChoice}>
-        {this.state.answerChoice}
-      </input>
+      <div>
+        <input
+          id={"fill-in-the-blank-answer" + this.props.question.id}
+          className="fill-in-the-blank-answer"
+          onClick={this.updateAnswerText}
+          type="text"
+          onChange={this.updateAnswerText}>
+        </input>
+      </div>
     );
   },
   updateAnswerChoice: function(e) {
     this.setState({answerChoice: e.target.value});
   },
+  updateAnswerText: function(e) {
+    this.setState({answerText: e.target.value});
+  },
   submitAnswer: function(e) {
     e.preventDefault();
 
+    // var answerId = null;
+    // var answerText = null;
+
+    // if (typeof this.state.answerChoice === "string") {
+    //   answerText = this.state.answerChoice;
+    // } else if (typeof this.state.answerChoice === "number") {
+    //   answerId = this.state.answerChoice;
+    // }
+
     var answerParams = {
       user_id: 1,
-      answer_id: this.state.answerChoice
+      answer_id: this.state.answerChoice,
+      answer_text: this.state.answerText
     }
 
-    ApiUtil.submitAnswer(answerParams, this.revealAnswer);
+    ApiUtil.submitAnswer(answerParams, this.props.question.id, this.revealAnswer);
   },
   revealAnswer: function (result) {
     this.setState({questionResult: result})
     for (var i = 0; i < result.answers.length; i++) {
-      document.getElementById(result.answers[i].id).disabled = true;
+      if (this.props.question.question_type === "fill in the blank") {
+        document.getElementById("fill-in-the-blank-answer" + this.props.question.id).disabled = true;
+      } else {
+        document.getElementById(result.answers[i].id).disabled = true;
+      }
     }
   },
   buttonOrResult: function () {

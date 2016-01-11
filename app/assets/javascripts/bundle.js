@@ -30979,6 +30979,7 @@
 	  getInitialState: function () {
 	    return {
 	      answerChoice: "",
+	      answerText: "",
 	      questionResult: null
 	    };
 	  },
@@ -31051,32 +31052,50 @@
 	  },
 	  fillInTheBlankAnswerBody: function () {
 	    return React.createElement(
-	      'input',
-	      {
+	      'div',
+	      null,
+	      React.createElement('input', {
+	        id: "fill-in-the-blank-answer" + this.props.question.id,
 	        className: 'fill-in-the-blank-answer',
-	        onClick: this.updateAnswerChoice,
+	        onClick: this.updateAnswerText,
 	        type: 'text',
-	        onChange: this.updateAnswerChoice },
-	      this.state.answerChoice
+	        onChange: this.updateAnswerText })
 	    );
 	  },
 	  updateAnswerChoice: function (e) {
 	    this.setState({ answerChoice: e.target.value });
 	  },
+	  updateAnswerText: function (e) {
+	    this.setState({ answerText: e.target.value });
+	  },
 	  submitAnswer: function (e) {
 	    e.preventDefault();
 
+	    // var answerId = null;
+	    // var answerText = null;
+
+	    // if (typeof this.state.answerChoice === "string") {
+	    //   answerText = this.state.answerChoice;
+	    // } else if (typeof this.state.answerChoice === "number") {
+	    //   answerId = this.state.answerChoice;
+	    // }
+
 	    var answerParams = {
 	      user_id: 1,
-	      answer_id: this.state.answerChoice
+	      answer_id: this.state.answerChoice,
+	      answer_text: this.state.answerText
 	    };
 
-	    ApiUtil.submitAnswer(answerParams, this.revealAnswer);
+	    ApiUtil.submitAnswer(answerParams, this.props.question.id, this.revealAnswer);
 	  },
 	  revealAnswer: function (result) {
 	    this.setState({ questionResult: result });
 	    for (var i = 0; i < result.answers.length; i++) {
-	      document.getElementById(result.answers[i].id).disabled = true;
+	      if (this.props.question.question_type === "fill in the blank") {
+	        document.getElementById("fill-in-the-blank-answer" + this.props.question.id).disabled = true;
+	      } else {
+	        document.getElementById(result.answers[i].id).disabled = true;
+	      }
 	    }
 	  },
 	  buttonOrResult: function () {
@@ -31226,12 +31245,13 @@
 	      }
 	    });
 	  },
-	  submitAnswer: function (answerParams, revealAnswerCallback) {
+	  submitAnswer: function (answerParams, questionId, revealAnswerCallback) {
 	    $.ajax({
 	      url: "answer_choices",
 	      method: "POST",
 	      data: {
-	        answer_choice: answerParams
+	        answer_choice: answerParams,
+	        question_id: questionId
 	      },
 	      success: function (questionResult) {
 	        revealAnswerCallback(questionResult);

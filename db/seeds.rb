@@ -2,7 +2,7 @@ Quiz.create!({
   title: "Ruby Quiz",
   day: "W1D1",
   max_time: 60,
-  number_of_questions: 2
+  number_of_questions: 3
 })
 
 Question.create!({
@@ -49,23 +49,23 @@ Answer.create!({
   question_id: 2
 })
 
-# Question.create!({
-#   question_type: "fill in the blank",
-#   quiz_id: 1,
-#   text: "The shortest way to create a hash is ____",
-#   correct_answer_id: 8,
-#   explanation: "Indexing starts from 0"
-#   })
-#
-# Answer.create!({
-#   text: "[]",
-#   question_id: 3
-# })
-# Answer.create!({
-#   text: "{}",
-#   question_id: 3
-# })
-# Answer.create!({
-#   text: "<>",
-#   question_id: 3
-# })
+Question.create!({
+  question_type: "fill in the blank",
+  quiz_id: 1,
+  text: "The shortest way to create a hash is ____",
+  correct_answer_id: 8,
+  explanation: "Indexing starts from 0"
+  })
+
+Answer.create!({
+  text: "[]",
+  question_id: 3
+})
+Answer.create!({
+  text: "{}",
+  question_id: 3
+})
+Answer.create!({
+  text: "<>",
+  question_id: 3
+})
