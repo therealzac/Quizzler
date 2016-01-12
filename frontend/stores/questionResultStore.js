@@ -9,7 +9,7 @@ var addQuestionResult = function(questionResult, questionId) {
 };
 
 QuestionResultStore.all = function() {
-  return _questionResults.slice(0);
+  return _questionResults;
 };
 
 QuestionResultStore.__onDispatch = function (payload) {
@@ -20,3 +20,5 @@ QuestionResultStore.__onDispatch = function (payload) {
       break;
   }
 };
+
+module.exports = QuestionResultStore;

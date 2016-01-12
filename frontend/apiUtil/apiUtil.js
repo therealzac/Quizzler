@@ -1,7 +1,9 @@
-apiUtil = {
+var ApiActions = require('../apiActions/apiActions.js');
+
+var ApiUtil = {
   fetchQuiz: function (id) {
     $.ajax({
-      url: "quiz/" + id,
+      url: "quizzes/" + id,
       method: "GET",
       success: function (quiz) {
         ApiActions.recieveQuiz(quiz);
@@ -11,17 +13,17 @@ apiUtil = {
       }
     });
   },
-
-  submitAnswer: function(questionId, answerChoice) {
+  submitAnswer: function(answerParams, questionId, revealAnswerCallback) {
     $.ajax({
       url: "answer_choices",
       method: "POST",
       data: {
-        question_id: questionId,
-        answer_choice: answerChoice
+        answer_choice: answerParams,
+        question_id: questionId
       },
       success: function(questionResult) {
-        ApiActions.receiveQuestionResult(questionResult, questionId);
+        revealAnswerCallback(questionResult);
+        ApiActions.receiveQuestionResult(questionResult);
       },
       error: function(error) {
         console.log(error.message);
@@ -29,3 +31,5 @@ apiUtil = {
     })
   }
 }
+
+module.exports = ApiUtil;

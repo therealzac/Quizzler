@@ -1,5 +1,5 @@
 class AnswerChoice < ActiveRecord::Base
-  validates :user_id, :answer_id, presence: true
+  validates :user_id, presence: true
   validates :user_id, uniqueness: { scope: [:answer_id] }
 
   belongs_to :user

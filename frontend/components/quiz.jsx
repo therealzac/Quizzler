@@ -1,17 +1,15 @@
 var React = require('react');
 var QuizStore = require('../stores/quizStore');
-var QuestionResultStore = require('../stores/questionResultsStore');
+var QuestionResultStore = require('../stores/questionResultStore');
 var Question = require('./question.jsx');
-var Modal = require('./modal.jsx');
 
 var Quiz = React.createClass({
   getInitialState: function () {
     return {
       startButtonClass: "start-button",
       quizOpen: false,
-      modalOpen: false,
-      quiz: {},
-      questionResults = {}
+      quiz: QuizStore.quiz(),
+      questionResults: {}
      };
   },
   handleClick: function () {
@@ -38,40 +36,28 @@ var Quiz = React.createClass({
     if (!this.state.quizOpen){
       return "";
     } else {
-      this.state.quiz.questions.map(function (question) {
-        return <Question question={question}/>
-      });
+      return (this.state.quiz.questions.map(function (question, idx) {
+        return (
+          <div key={idx}>
+            <Question number={idx + 1} question={question}/>
+          </div>
+        )
+      }));
     }
-  },
-  renderModal: function () {
-    if (!this.state.modalOpen){
-      return "";
-    } else {
-      return (
-        <Modal
-          questionResults={this.state.questionResults}
-          closeModal={this.closeModal}/>
-      );
-    }
-  },
-  closeModal: function() {
-    this.setState({
-      modalOpen: false
-    })
   },
   render: function () {
     return (
       <div>
+        <div className="quiz-title">
+          <h3>{this.state.quiz.title}</h3>
+        </div>
+
         <div className={this.state.startButtonClass}>
           <img onClick={this.handleClick} src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQsqoVToJaalEM8Uq1E-P5AolKGr5NmPx1tuzUs-Nw4CNL0K0Vf"/>
         </div>
 
         <div className="quiz">
           {this.renderQuiz()}
-        </div>
-
-        <div className="modal">
-          {this.renderModal()}
         </div>
       </div>
     )
