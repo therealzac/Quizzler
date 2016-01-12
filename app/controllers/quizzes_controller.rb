@@ -1,6 +1,13 @@
 class QuizzesController < ApplicationController
 
   def new
+    @quiz = Quiz.new
+  end
+
+# this is a custom route, to view all of the tests in a clickable fashion
+  def admin_index
+    @quizzes = Quiz.all
+    render :admin_index
 
   end
 
@@ -14,20 +21,26 @@ class QuizzesController < ApplicationController
 
 
     if @quiz.save
-      render :create
+      redirect_to admin_index_quizzes_url
     else
       render json: @quiz.errors.full_messages, status: 422
     end
   end
 
     def show
+
       @quiz = Quiz.find(params[:id])
+    end
+
+    def admin_show
+
+        @quiz = Quiz.find(params[:id])
     end
 
     def destroy
      @quiz = Quiz.find(params[:id])
      @quiz.destroy
-     render :show
+     redirect_to '/quizzes/admin_index/'
     end
 
   private

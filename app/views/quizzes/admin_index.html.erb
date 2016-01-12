@@ -1,0 +1,59 @@
+<h3>Quizzes</h3>
+
+<% @quizzes.each do |quiz| %>
+<br>
+<div style="border: 3px solid black;border-radius:5px;margin:5px;width:300px">
+     <a style="color:blue;"
+        href="http://localhost:3000/quizzes/admin_show/<%= quiz.id %>/"> <%= quiz.title %> </a>
+    <br>
+    <label>Number of Questions:</label>
+    <%= quiz.number_of_questions %>
+    <br>
+    <label>Quiz Day:</label>
+    <%= quiz.day %>
+    <br>
+    <label>Time Allowed:</label>
+    <%= quiz.max_time %>
+
+    <br>
+    <div style="background-color:red;
+            -moz-border-radius:28px;
+            -webkit-border-radius:28px;
+            border-radius:28px;
+            border:1px solid #18ab29;
+            display:inline-block;
+            cursor:pointer;
+            color:#ffffff;
+            font-family:Arial;
+            font-size:12px;
+            padding:5px 10px;
+            text-decoration:none;
+            text-shadow:0px 1px 0px #2f6627;">
+      <%= link_to "Delete Quiz", quiz_url({id: quiz.id}), method: :delete %>
+    </div>
+  </div>
+
+  <% end %>
+  <br>
+
+<br>
+<br>
+<a style=" background-color:#44c767;
+        -moz-border-radius:28px;
+        -webkit-border-radius:28px;
+        border-radius:28px;
+        border:1px solid #18ab29;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:17px;
+        padding:16px 31px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #2f6627;"
+href="/quizzes/new"> Add a Quiz </a>
+
+<br>
+<br>
+
+</a>
