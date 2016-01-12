@@ -3,7 +3,8 @@ Rails.application.routes.draw do
   resources :admins, only: [:new, :create, :edit, :update, :destroy, :show]
   resources :quizzes, defaults: {format: :json}
 
-  resources :answer_choices, only: [:create]
+  resources :answer_choices, only: [:create, :index]
+  resources :user_quizzes, only: [:create, :show, :index]
 
   namespace :test, defaults: {format: :json} do
     post "post_answer_choice", to: "answer_choices#create"

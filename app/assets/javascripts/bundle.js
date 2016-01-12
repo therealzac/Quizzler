@@ -23997,8 +23997,8 @@
 
 	var React = __webpack_require__(1),
 	    Navbar = __webpack_require__(207),
-	    Quiz = __webpack_require__(208),
-	    ApiUtil = __webpack_require__(233);
+	    Quiz = __webpack_require__(252),
+	    ApiUtil = __webpack_require__(229);
 
 	var App = React.createClass({
 	  displayName: 'App',
@@ -24024,9 +24024,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var QuizStore = __webpack_require__(209);
-	var ApiUtil = __webpack_require__(233);
-	var Modal = __webpack_require__(235);
+	var QuizStore = __webpack_require__(208);
+	var ApiUtil = __webpack_require__(229);
+	var Modal = __webpack_require__(231);
+	var UserQuizStore = __webpack_require__(251);
 
 	const customStyles = {
 	  content: {
@@ -24047,14 +24048,21 @@
 	      quiz: {},
 	      modalOpen: false,
 	      questionsAnswered: 0,
-	      questionsCorrect: 0
+	      questionsCorrect: 0,
+	      timeRemaining: null,
+	      userQuiz: null
 	    };
 	  },
 	  componentDidMount: function () {
-	    this.quizListener = QuizStore.addListener(this._onChange);
+	    this.quizListener = QuizStore.addListener(this._quizChange);
 	    ApiUtil.fetchQuiz(1);
+	    this.userQuizListener = UserQuizStore.addListener(this._userQuizChange);
 	  },
-	  _onChange: function () {
+	  componentWillUnmount: function () {
+	    this.quizListener.remove();
+	    this.userQuizListener.remove();
+	  },
+	  _quizChange: function () {
 	    var that = this;
 
 	    this.setState({
@@ -24068,6 +24076,22 @@
 	        that.setState({ modalOpen: true });
 	      }, 1500);
 	    };
+
+	    ApiUtil.fetchUserQuiz(this.state.quiz.id);
+	  },
+	  _userQuizChange: function () {
+	    this.setState({ userQuiz: UserQuizStore.all() });
+	    var timeElapsed = Math.floor((Date.now() - this.state.userQuiz.startTime) / 1000);
+	    this.setState({
+	      timeRemaining: this.state.quiz.max_time * 60 - timeElapsed
+	    });
+	    if (this.timerTicker === undefined) {
+	      this.timerTicker = window.setInterval(function () {
+	        this.setState({
+	          timeRemaining: this.state.timeRemaining - 1
+	        });
+	      }.bind(this), 1000);
+	    }
 	  },
 	  renderModal: function () {
 	    var appElement = document.getElementById('root');
@@ -24143,7 +24167,7 @@
 	          'li',
 	          null,
 	          'Time remaining: ',
-	          this.state.quiz.max_time
+	          this.state.timeRemaining
 	        )
 	      ),
 	      React.createElement(
@@ -24161,92 +24185,10 @@
 /* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
-	var QuizStore = __webpack_require__(209);
-	var QuestionResultStore = __webpack_require__(231);
-	var Question = __webpack_require__(230);
-
-	var Quiz = React.createClass({
-	  displayName: 'Quiz',
-
-	  getInitialState: function () {
-	    return {
-	      startButtonClass: "start-button",
-	      quizOpen: false,
-	      quiz: QuizStore.quiz(),
-	      questionResults: {}
-	    };
-	  },
-	  handleClick: function () {
-	    this.setState({ startButtonClass: "hidden", quizOpen: true });
-	  },
-	  componentDidMount: function () {
-	    this.quizListener = QuizStore.addListener(this._onChange);
-	    this.questionResultListener = QuestionResultStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function () {
-	    this.quizListener.remove();
-	    this.questionResultListener.remove();
-	  },
-	  _onChange: function () {
-	    var quiz = QuizStore.quiz();
-	    var questionResults = QuestionResultStore.all();
-
-	    this.setState({
-	      quiz: quiz,
-	      questionResults: questionResults
-	    });
-	  },
-	  renderQuiz: function () {
-	    if (!this.state.quizOpen) {
-	      return "";
-	    } else {
-	      return this.state.quiz.questions.map(function (question, idx) {
-	        return React.createElement(
-	          'div',
-	          { key: idx },
-	          React.createElement(Question, { number: idx + 1, question: question })
-	        );
-	      });
-	    }
-	  },
-	  render: function () {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'div',
-	        { className: 'quiz-title' },
-	        React.createElement(
-	          'h3',
-	          null,
-	          this.state.quiz.title
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: this.state.startButtonClass },
-	        React.createElement('img', { onClick: this.handleClick, src: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQsqoVToJaalEM8Uq1E-P5AolKGr5NmPx1tuzUs-Nw4CNL0K0Vf' })
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'quiz' },
-	        this.renderQuiz()
-	      )
-	    );
-	  }
-	});
-
-	module.exports = Quiz;
-
-/***/ },
-/* 209 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Store = __webpack_require__(210).Store;
-	var AppDispatcher = __webpack_require__(226);
+	var Store = __webpack_require__(209).Store;
+	var AppDispatcher = __webpack_require__(225);
 	var QuizStore = new Store(AppDispatcher);
-	var QuizConstants = __webpack_require__(229);
+	var QuizConstants = __webpack_require__(228);
 
 	var _quiz = {};
 	var _questionsAnswered = 0;
@@ -24292,7 +24234,7 @@
 	module.exports = QuizStore;
 
 /***/ },
-/* 210 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24304,15 +24246,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Container = __webpack_require__(211);
-	module.exports.MapStore = __webpack_require__(215);
-	module.exports.Mixin = __webpack_require__(225);
-	module.exports.ReduceStore = __webpack_require__(216);
-	module.exports.Store = __webpack_require__(217);
+	module.exports.Container = __webpack_require__(210);
+	module.exports.MapStore = __webpack_require__(214);
+	module.exports.Mixin = __webpack_require__(224);
+	module.exports.ReduceStore = __webpack_require__(215);
+	module.exports.Store = __webpack_require__(216);
 
 
 /***/ },
-/* 211 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24334,10 +24276,10 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxStoreGroup = __webpack_require__(212);
+	var FluxStoreGroup = __webpack_require__(211);
 
-	var invariant = __webpack_require__(213);
-	var shallowEqual = __webpack_require__(214);
+	var invariant = __webpack_require__(212);
+	var shallowEqual = __webpack_require__(213);
 
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -24495,7 +24437,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 212 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24514,7 +24456,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(213);
+	var invariant = __webpack_require__(212);
 
 	/**
 	 * FluxStoreGroup allows you to execute a callback on every dispatch after
@@ -24576,7 +24518,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 213 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24631,7 +24573,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 214 */
+/* 213 */
 /***/ function(module, exports) {
 
 	/**
@@ -24686,7 +24628,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 215 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24707,10 +24649,10 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxReduceStore = __webpack_require__(216);
-	var Immutable = __webpack_require__(224);
+	var FluxReduceStore = __webpack_require__(215);
+	var Immutable = __webpack_require__(223);
 
-	var invariant = __webpack_require__(213);
+	var invariant = __webpack_require__(212);
 
 	/**
 	 * This is a simple store. It allows caching key value pairs. An implementation
@@ -24836,7 +24778,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 216 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24857,10 +24799,10 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxStore = __webpack_require__(217);
+	var FluxStore = __webpack_require__(216);
 
-	var abstractMethod = __webpack_require__(223);
-	var invariant = __webpack_require__(213);
+	var abstractMethod = __webpack_require__(222);
+	var invariant = __webpack_require__(212);
 
 	var FluxReduceStore = (function (_FluxStore) {
 	  _inherits(FluxReduceStore, _FluxStore);
@@ -24943,7 +24885,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 217 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24962,11 +24904,11 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _require = __webpack_require__(218);
+	var _require = __webpack_require__(217);
 
 	var EventEmitter = _require.EventEmitter;
 
-	var invariant = __webpack_require__(213);
+	var invariant = __webpack_require__(212);
 
 	/**
 	 * This class should be extended by the stores in your application, like so:
@@ -25126,7 +25068,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 218 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25139,14 +25081,14 @@
 	 */
 
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(219)
+	  EventEmitter: __webpack_require__(218)
 	};
 
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 219 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25165,8 +25107,8 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var EmitterSubscription = __webpack_require__(220);
-	var EventSubscriptionVendor = __webpack_require__(222);
+	var EmitterSubscription = __webpack_require__(219);
+	var EventSubscriptionVendor = __webpack_require__(221);
 
 	var emptyFunction = __webpack_require__(15);
 	var invariant = __webpack_require__(13);
@@ -25343,7 +25285,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 220 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25364,7 +25306,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var EventSubscription = __webpack_require__(221);
+	var EventSubscription = __webpack_require__(220);
 
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -25396,7 +25338,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 221 */
+/* 220 */
 /***/ function(module, exports) {
 
 	/**
@@ -25450,7 +25392,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 222 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25559,7 +25501,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 223 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25576,7 +25518,7 @@
 
 	'use strict';
 
-	var invariant = __webpack_require__(213);
+	var invariant = __webpack_require__(212);
 
 	function abstractMethod(className, methodName) {
 	   true ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Subclasses of %s must override %s() with their own implementation.', className, methodName) : invariant(false) : undefined;
@@ -25586,7 +25528,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 224 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -30573,7 +30515,7 @@
 	}));
 
 /***/ },
-/* 225 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -30590,9 +30532,9 @@
 
 	'use strict';
 
-	var FluxStoreGroup = __webpack_require__(212);
+	var FluxStoreGroup = __webpack_require__(211);
 
-	var invariant = __webpack_require__(213);
+	var invariant = __webpack_require__(212);
 
 	/**
 	 * `FluxContainer` should be preferred over this mixin, but it requires using
@@ -30696,14 +30638,14 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 226 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(227).Dispatcher;
+	var AppDispatcher = __webpack_require__(226).Dispatcher;
 	module.exports = new AppDispatcher();
 
 /***/ },
-/* 227 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -30715,11 +30657,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Dispatcher = __webpack_require__(228);
+	module.exports.Dispatcher = __webpack_require__(227);
 
 
 /***/ },
-/* 228 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -30741,7 +30683,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(213);
+	var invariant = __webpack_require__(212);
 
 	var _prefix = 'ID_';
 
@@ -30956,281 +30898,21 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 229 */
+/* 228 */
 /***/ function(module, exports) {
 
 	module.exports = {
 	  QUIZ_RECIEVED: "QUIZ_RECIEVED",
-	  QUESTION_RESULT_RECIEVED: "QUESTION_RESULT_RECIEVED"
+	  QUESTION_RESULT_RECIEVED: "QUESTION_RESULT_RECIEVED",
+	  ALL_QUESTION_RESULTS_RECIEVED: "ALL_QUESTION_RESULTS_RECIEVED",
+	  USER_QUIZ_RECIEVED: "USER_QUIZ_RECIEVED"
 	};
 
 /***/ },
-/* 230 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
-	var QuestionResultStore = __webpack_require__(231);
-	var ApiUtil = __webpack_require__(233);
-	var ReactCSSTransitionGroup = __webpack_require__(255);
-
-	var Question = React.createClass({
-	  displayName: 'Question',
-
-	  getInitialState: function () {
-	    return {
-	      answerChoice: "",
-	      answerText: "",
-	      questionResult: null
-	    };
-	  },
-	  componentDidMount: function () {
-	    this.questionResultStoreListener = QuestionResultStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function () {
-	    this.questionResultStoreListener.remove();
-	  },
-	  _onChange: function () {
-	    questionResult = QuestionResultStore.all()[this.props.question.id];
-	    if (questionResult) {
-	      this.setState({
-	        questionResult: questionResult
-	      });
-	    };
-	  },
-	  showAnswerBody: function () {
-	    if (this.props.question.question_type === "multiple choice") {
-	      return this.multipleChoiceAnswerBody();
-	    } else if (this.props.question.question_type === "true false") {
-	      return this.trueFalseAnswerBody();
-	    } else if (this.props.question.question_type === "fill in the blank") {
-	      return this.fillInTheBlankAnswerBody();
-	    }
-	  },
-	  multipleChoiceAnswerBody: function () {
-	    var that = this;
-	    return that.props.question.answers.map(function (answer, idx) {
-	      return React.createElement(
-	        'div',
-	        { key: idx },
-	        React.createElement('input', {
-	          id: answer.id,
-	          className: 'multiple-choice-answer',
-	          onClick: that.updateAnswerChoice,
-	          name: that.props.question.id,
-	          type: 'radio',
-	          value: answer.id }),
-	        React.createElement(
-	          'label',
-	          { htmlFor: answer.id },
-	          ' ',
-	          answer.text
-	        )
-	      );
-	    });
-	  },
-	  trueFalseAnswerBody: function () {
-	    var that = this;
-	    return that.props.question.answers.map(function (answer, idx) {
-	      return React.createElement(
-	        'div',
-	        { key: idx },
-	        React.createElement('input', {
-	          id: answer.id,
-	          className: 'multiple-choice-answer',
-	          onClick: that.updateAnswerChoice,
-	          name: that.props.question.id,
-	          type: 'radio',
-	          value: answer.id }),
-	        React.createElement(
-	          'label',
-	          { htmlFor: answer.id },
-	          ' ',
-	          answer.text
-	        )
-	      );
-	    });
-	  },
-	  fillInTheBlankAnswerBody: function () {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement('input', {
-	        id: "fill-in-the-blank-answer" + this.props.question.id,
-	        className: 'fill-in-the-blank-answer',
-	        onClick: this.updateAnswerText,
-	        type: 'text',
-	        onChange: this.updateAnswerText })
-	    );
-	  },
-	  updateAnswerChoice: function (e) {
-	    this.setState({ answerChoice: e.target.value });
-	  },
-	  updateAnswerText: function (e) {
-	    this.setState({ answerText: e.target.value });
-	  },
-	  submitAnswer: function (e) {
-	    e.preventDefault();
-
-	    // var answerId = null;
-	    // var answerText = null;
-
-	    // if (typeof this.state.answerChoice === "string") {
-	    //   answerText = this.state.answerChoice;
-	    // } else if (typeof this.state.answerChoice === "number") {
-	    //   answerId = this.state.answerChoice;
-	    // }
-
-	    var answerParams = {
-	      user_id: 1,
-	      answer_id: this.state.answerChoice,
-	      answer_text: this.state.answerText
-	    };
-
-	    ApiUtil.submitAnswer(answerParams, this.props.question.id, this.revealAnswer);
-	  },
-	  revealAnswer: function (result) {
-	    this.setState({ questionResult: result });
-	    for (var i = 0; i < result.answers.length; i++) {
-	      if (this.props.question.question_type === "fill in the blank") {
-	        document.getElementById("fill-in-the-blank-answer" + this.props.question.id).disabled = true;
-	      } else {
-	        document.getElementById(result.answers[i].id).disabled = true;
-	      }
-	    }
-	  },
-	  buttonOrResult: function () {
-	    if (!this.state.questionResult) {
-	      return React.createElement(
-	        'button',
-	        {
-	          className: 'submit-button',
-	          onClick: this.submitAnswer },
-	        'Submit'
-	      );
-	    } else {
-	      if (this.state.questionResult.is_correct) {
-	        return React.createElement(
-	          ReactCSSTransitionGroup,
-	          { transitionName: 'reveal-answer',
-	            transitionAppear: true,
-	            transitionAppearTimeout: 0,
-	            transitionEnterTimeout: 0,
-	            transitionLeaveTimeout: 0 },
-	          React.createElement(
-	            'div',
-	            { key: this.state.questionResult.correct_answer_id },
-	            React.createElement(
-	              'span',
-	              { className: 'correct' },
-	              'Correct!'
-	            ),
-	            React.createElement('br', null),
-	            React.createElement('br', null),
-	            React.createElement(
-	              'span',
-	              { className: 'explanation' },
-	              this.state.questionResult.explanation
-	            )
-	          )
-	        );
-	      } else {
-	        return React.createElement(
-	          ReactCSSTransitionGroup,
-	          { transitionName: 'reveal-answer',
-	            transitionAppear: true,
-	            transitionAppearTimeout: 0,
-	            transitionEnterTimeout: 0,
-	            transitionLeaveTimeout: 0 },
-	          React.createElement(
-	            'div',
-	            { key: this.state.questionResult.correct_answer_id },
-	            React.createElement(
-	              'span',
-	              { className: 'incorrect' },
-	              'Incorrect!'
-	            ),
-	            React.createElement('br', null),
-	            React.createElement('br', null),
-	            'Correct answer: ',
-	            this.state.questionResult.correct_answer.text,
-	            React.createElement('br', null),
-	            React.createElement(
-	              'span',
-	              { className: 'explanation' },
-	              this.state.questionResult.explanation
-	            )
-	          )
-	        );
-	      }
-	    }
-	  },
-	  render: function () {
-	    return React.createElement(
-	      'div',
-	      { className: 'question' },
-	      React.createElement(
-	        'div',
-	        { className: 'question-text' },
-	        React.createElement(
-	          'b',
-	          null,
-	          this.props.number,
-	          '.'
-	        ),
-	        ' ',
-	        this.props.question.text
-	      ),
-	      React.createElement('br', null),
-	      React.createElement(
-	        'div',
-	        { className: 'answer-body' },
-	        this.showAnswerBody(),
-	        React.createElement('br', null),
-	        this.buttonOrResult()
-	      ),
-	      React.createElement('br', null),
-	      React.createElement('br', null)
-	    );
-	  }
-	});
-
-	module.exports = Question;
-
-/***/ },
-/* 231 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Store = __webpack_require__(210).Store;
-	var AppDispatcher = __webpack_require__(226);
-	var QuestionResultStore = new Store(AppDispatcher);
-
-	var _questionResults = {};
-
-	var addQuestionResult = function (questionResult, questionId) {
-	  _questionResults[questionId] = questionResult;
-	};
-
-	QuestionResultStore.all = function () {
-	  return _questionResults;
-	};
-
-	QuestionResultStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case "QUESTION_RESULT_RECIEVED":
-	      addQuestionResult(payload.questionResult, payload.questionId);
-	      QuestionResultStore.__emitChange();
-	      break;
-	  }
-	};
-
-	module.exports = QuestionResultStore;
-
-/***/ },
-/* 232 */,
-/* 233 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ApiActions = __webpack_require__(234);
+	var ApiActions = __webpack_require__(230);
 
 	var ApiUtil = {
 	  fetchQuiz: function (id) {
@@ -31245,6 +30927,7 @@
 	      }
 	    });
 	  },
+
 	  submitAnswer: function (answerParams, questionId, revealAnswerCallback) {
 	    $.ajax({
 	      url: "answer_choices",
@@ -31258,7 +30941,51 @@
 	        ApiActions.receiveQuestionResult(questionResult);
 	      },
 	      error: function (error) {
-	        console.log(error.message);
+	        console.log(error);
+	      }
+	    });
+	  },
+
+	  createUserQuiz: function (quizId) {
+	    $.ajax({
+	      url: "user_quizzes",
+	      method: "POST",
+	      data: { quiz_id: quizId },
+	      success: function (userQuiz) {
+	        ApiActions.receiveUserQuiz(userQuiz);
+	      },
+	      error: function (error) {
+	        console.log(error);
+	      }
+	    });
+	  },
+
+	  fetchUserQuiz: function (quizId) {
+	    $.ajax({
+	      url: "user_quizzes",
+	      method: "GET",
+	      data: { quiz_id: quizId },
+	      success: function (userQuiz) {
+	        if (userQuiz) {
+	          ApiActions.receiveUserQuiz(userQuiz);
+	        }
+	      },
+	      error: function (error) {
+	        console.log(error);
+	      }
+	    });
+	  },
+
+	  fetchAllQuestionResults: function (quizId) {
+	    $.ajax({
+	      url: "answer_choices",
+	      method: "GET",
+	      data: { quiz_id: quizId },
+	      success: function (questionResults) {
+	        ApiActions.receiveAllQuestionResults(questionResults);
+	      },
+	      error: function (error) {
+	        console.log(error);
 	      }
 	    });
 	  }
@@ -31267,11 +30994,11 @@
 	module.exports = ApiUtil;
 
 /***/ },
-/* 234 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(226);
-	var QuizConstants = __webpack_require__(229);
+	var AppDispatcher = __webpack_require__(225);
+	var QuizConstants = __webpack_require__(228);
 
 	module.exports = {
 	  recieveQuiz: function (quiz) {
@@ -31280,32 +31007,47 @@
 	      quiz: quiz
 	    });
 	  },
+
 	  receiveQuestionResult: function (questionResult) {
 	    AppDispatcher.dispatch({
 	      actionType: QuizConstants.QUESTION_RESULT_RECIEVED,
 	      questionResult: questionResult
 	    });
+	  },
+
+	  receiveUserQuiz: function (userQuiz) {
+	    AppDispatcher.dispatch({
+	      actionType: QuizConstants.USER_QUIZ_RECIEVED,
+	      userQuiz: userQuiz
+	    });
+	  },
+
+	  receiveAllQuestionResults: function (questionResults) {
+	    AppDispatcher.dispatch({
+	      actionType: QuizConstants.ALL_QUESTION_RESULTS_RECIEVED,
+	      questionResults: questionResults
+	    });
 	  }
 	};
 
 /***/ },
-/* 235 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(236);
+	module.exports = __webpack_require__(232);
 
 
 
 /***/ },
-/* 236 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var ExecutionEnvironment = __webpack_require__(237);
-	var ModalPortal = React.createFactory(__webpack_require__(238));
-	var ariaAppHider = __webpack_require__(253);
-	var elementClass = __webpack_require__(254);
+	var ExecutionEnvironment = __webpack_require__(233);
+	var ModalPortal = React.createFactory(__webpack_require__(234));
+	var ariaAppHider = __webpack_require__(249);
+	var elementClass = __webpack_require__(250);
 	var renderSubtreeIntoContainer = __webpack_require__(158).unstable_renderSubtreeIntoContainer;
 
 	var SafeHTMLElement = ExecutionEnvironment.canUseDOM ? window.HTMLElement : {};
@@ -31384,7 +31126,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 237 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -31429,14 +31171,14 @@
 
 
 /***/ },
-/* 238 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var div = React.DOM.div;
-	var focusManager = __webpack_require__(239);
-	var scopeTab = __webpack_require__(241);
-	var Assign = __webpack_require__(242);
+	var focusManager = __webpack_require__(235);
+	var scopeTab = __webpack_require__(237);
+	var Assign = __webpack_require__(238);
 
 
 	// so that our CSS is statically analyzable
@@ -31633,10 +31375,10 @@
 
 
 /***/ },
-/* 239 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(240);
+	var findTabbable = __webpack_require__(236);
 	var modalElement = null;
 	var focusLaterElement = null;
 	var needToFocus = false;
@@ -31707,7 +31449,7 @@
 
 
 /***/ },
-/* 240 */
+/* 236 */
 /***/ function(module, exports) {
 
 	/*!
@@ -31763,10 +31505,10 @@
 
 
 /***/ },
-/* 241 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(240);
+	var findTabbable = __webpack_require__(236);
 
 	module.exports = function(node, event) {
 	  var tabbable = findTabbable(node);
@@ -31784,7 +31526,7 @@
 
 
 /***/ },
-/* 242 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31795,9 +31537,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseAssign = __webpack_require__(243),
-	    createAssigner = __webpack_require__(249),
-	    keys = __webpack_require__(245);
+	var baseAssign = __webpack_require__(239),
+	    createAssigner = __webpack_require__(245),
+	    keys = __webpack_require__(241);
 
 	/**
 	 * A specialized version of `_.assign` for customizing assigned values without
@@ -31870,7 +31612,7 @@
 
 
 /***/ },
-/* 243 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31881,8 +31623,8 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseCopy = __webpack_require__(244),
-	    keys = __webpack_require__(245);
+	var baseCopy = __webpack_require__(240),
+	    keys = __webpack_require__(241);
 
 	/**
 	 * The base implementation of `_.assign` without support for argument juggling,
@@ -31903,7 +31645,7 @@
 
 
 /***/ },
-/* 244 */
+/* 240 */
 /***/ function(module, exports) {
 
 	/**
@@ -31941,7 +31683,7 @@
 
 
 /***/ },
-/* 245 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31952,9 +31694,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var getNative = __webpack_require__(246),
-	    isArguments = __webpack_require__(247),
-	    isArray = __webpack_require__(248);
+	var getNative = __webpack_require__(242),
+	    isArguments = __webpack_require__(243),
+	    isArray = __webpack_require__(244);
 
 	/** Used to detect unsigned integer values. */
 	var reIsUint = /^\d+$/;
@@ -32183,7 +31925,7 @@
 
 
 /***/ },
-/* 246 */
+/* 242 */
 /***/ function(module, exports) {
 
 	/**
@@ -32326,7 +32068,7 @@
 
 
 /***/ },
-/* 247 */
+/* 243 */
 /***/ function(module, exports) {
 
 	/**
@@ -32438,7 +32180,7 @@
 
 
 /***/ },
-/* 248 */
+/* 244 */
 /***/ function(module, exports) {
 
 	/**
@@ -32624,7 +32366,7 @@
 
 
 /***/ },
-/* 249 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32635,9 +32377,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var bindCallback = __webpack_require__(250),
-	    isIterateeCall = __webpack_require__(251),
-	    restParam = __webpack_require__(252);
+	var bindCallback = __webpack_require__(246),
+	    isIterateeCall = __webpack_require__(247),
+	    restParam = __webpack_require__(248);
 
 	/**
 	 * Creates a function that assigns properties of source object(s) to a given
@@ -32682,7 +32424,7 @@
 
 
 /***/ },
-/* 250 */
+/* 246 */
 /***/ function(module, exports) {
 
 	/**
@@ -32753,7 +32495,7 @@
 
 
 /***/ },
-/* 251 */
+/* 247 */
 /***/ function(module, exports) {
 
 	/**
@@ -32891,7 +32633,7 @@
 
 
 /***/ },
-/* 252 */
+/* 248 */
 /***/ function(module, exports) {
 
 	/**
@@ -32964,7 +32706,7 @@
 
 
 /***/ },
-/* 253 */
+/* 249 */
 /***/ function(module, exports) {
 
 	var _element = typeof document !== 'undefined' ? document.body : null;
@@ -33011,7 +32753,7 @@
 
 
 /***/ },
-/* 254 */
+/* 250 */
 /***/ function(module, exports) {
 
 	module.exports = function(opts) {
@@ -33074,6 +32816,431 @@
 	  else this.add(className)
 	}
 
+
+/***/ },
+/* 251 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(209).Store;
+	var AppDispatcher = __webpack_require__(225);
+	var UserQuizStore = new Store(AppDispatcher);
+	var QuizConstants = __webpack_require__(228);
+
+	var _userQuiz = {};
+
+	var addAttribute = function () {};
+
+	var addUserQuiz = function (userQuiz) {
+	  _userQuiz["startTime"] = Date.parse(userQuiz.created_at);
+	  _userQuiz["quizId"] = userQuiz.quiz_id;
+	};
+
+	UserQuizStore.all = function () {
+	  return _userQuiz;
+	};
+
+	UserQuizStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case QuizConstants.USER_QUIZ_RECIEVED:
+	      addUserQuiz(payload.userQuiz);
+	      UserQuizStore.__emitChange();
+	      break;
+	  }
+	};
+
+	module.exports = UserQuizStore;
+
+/***/ },
+/* 252 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var QuizStore = __webpack_require__(208);
+	var QuestionResultStore = __webpack_require__(253);
+	var Question = __webpack_require__(254);
+	var ApiUtil = __webpack_require__(229);
+	var UserQuizStore = __webpack_require__(251);
+
+	var Quiz = React.createClass({
+	  displayName: 'Quiz',
+
+	  getInitialState: function () {
+	    return {
+	      startButtonClass: "start-button",
+	      quizOpen: false,
+	      quiz: QuizStore.quiz(),
+	      questionResults: {},
+	      userQuiz: null
+	    };
+	  },
+	  handleClick: function () {
+	    this.setState({ startButtonClass: "hidden", quizOpen: true });
+	    ApiUtil.createUserQuiz(this.state.quiz.id);
+	  },
+	  componentDidMount: function () {
+	    this.quizListener = QuizStore.addListener(this._quizChange);
+	    this.questionResultListener = QuestionResultStore.addListener(this._questionResultChange);
+	    this.userQuizListener = UserQuizStore.addListener(this._userQuizChange);
+	    ApiUtil.fetchUserQuiz(1);
+	    ApiUtil.fetchAllQuestionResults(1);
+	  },
+	  componentWillUnmount: function () {
+	    this.quizListener.remove();
+	    this.questionResultListener.remove();
+	  },
+	  _quizChange: function () {
+	    this.setState({
+	      quiz: QuizStore.quiz()
+	    });
+	  },
+	  _questionResultChange: function () {
+	    this.setState({
+	      questionResults: QuestionResultStore.all()
+	    });
+	  },
+	  _userQuizChange: function () {
+	    this.setState({
+	      userQuiz: UserQuizStore.all()
+	    });
+
+	    if (this.state.userQuiz.startTime) {
+	      this.setState({
+	        startButtonClass: "hidden",
+	        quizOpen: true
+	      });
+	    }
+	  },
+	  // _onChange: function() {
+	  //   var quiz = QuizStore.quiz();
+	  //   var questionResults = QuestionResultStore.all();
+	  //   var userQuiz = UserQuizStore.all();
+	  //
+	  //   this.setState({
+	  //     quiz: quiz,
+	  //     questionResults: questionResults,
+	  //     userQuiz: userQuiz
+	  //   });
+	  //
+	  //   if (userQuiz.startTime) {
+	  //     this.setState({
+	  //       startButtonClass: "hidden",
+	  //       quizOpen: true
+	  //     })
+	  //   }
+	  // },
+	  renderQuiz: function () {
+	    if (!this.state.quizOpen) {
+	      return "";
+	    } else {
+	      return this.state.quiz.questions.map(function (question, idx) {
+	        return React.createElement(
+	          'div',
+	          { key: idx },
+	          React.createElement(Question, { number: idx + 1, question: question })
+	        );
+	      });
+	    }
+	  },
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'div',
+	        { className: 'quiz-title' },
+	        React.createElement(
+	          'h3',
+	          null,
+	          this.state.quiz.title
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: this.state.startButtonClass },
+	        React.createElement('img', { onClick: this.handleClick, src: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQsqoVToJaalEM8Uq1E-P5AolKGr5NmPx1tuzUs-Nw4CNL0K0Vf' })
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'quiz' },
+	        this.renderQuiz()
+	      )
+	    );
+	  }
+	});
+
+	module.exports = Quiz;
+
+/***/ },
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(209).Store;
+	var AppDispatcher = __webpack_require__(225);
+	var QuestionResultStore = new Store(AppDispatcher);
+	var QuizConstants = __webpack_require__(228);
+
+	var _questionResults = {};
+
+	var addQuestionResult = function (questionResult, questionId) {
+	  _questionResults[questionId] = questionResult;
+	};
+
+	var populateQuestionResults = function (questionResults) {
+	  questionResults.forEach(function (questionResult) {
+	    _questionResults[questionResult.question_id] = questionResult;
+	  });
+	};
+
+	QuestionResultStore.all = function () {
+	  return _questionResults;
+	};
+
+	QuestionResultStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case "QUESTION_RESULT_RECIEVED":
+	      addQuestionResult(payload.questionResult, payload.questionId);
+	      QuestionResultStore.__emitChange();
+	      break;
+	    case QuizConstants.ALL_QUESTION_RESULTS_RECIEVED:
+	      populateQuestionResults(payload.questionResults);
+	      QuestionResultStore.__emitChange();
+	  }
+	};
+
+	module.exports = QuestionResultStore;
+
+/***/ },
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var QuestionResultStore = __webpack_require__(253);
+	var ApiUtil = __webpack_require__(229);
+	var ReactCSSTransitionGroup = __webpack_require__(255);
+
+	var Question = React.createClass({
+	  displayName: 'Question',
+
+	  getInitialState: function () {
+	    return {
+	      answerChoice: "",
+	      answerText: "",
+	      questionResult: null
+	    };
+	  },
+	  componentDidMount: function () {
+	    this.questionResultStoreListener = QuestionResultStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function () {
+	    this.questionResultStoreListener.remove();
+	  },
+	  _onChange: function () {
+	    questionResult = QuestionResultStore.all()[this.props.question.id];
+	    if (questionResult) {
+	      this.setState({
+	        questionResult: questionResult
+	      });
+	      this.revealAnswer(questionResult);
+	    };
+	  },
+	  showAnswerBody: function () {
+	    if (this.props.question.question_type === "multiple choice") {
+	      return this.multipleChoiceAnswerBody();
+	    } else if (this.props.question.question_type === "true false") {
+	      return this.trueFalseAnswerBody();
+	    } else if (this.props.question.question_type === "fill in the blank") {
+	      return this.fillInTheBlankAnswerBody();
+	    }
+	  },
+	  multipleChoiceAnswerBody: function () {
+	    var that = this;
+	    return that.props.question.answers.map(function (answer, idx) {
+	      return React.createElement(
+	        'div',
+	        { key: idx },
+	        React.createElement('input', {
+	          id: answer.id,
+	          className: 'multiple-choice-answer',
+	          onClick: that.updateAnswerChoice,
+	          name: that.props.question.id,
+	          type: 'radio',
+	          value: answer.id }),
+	        React.createElement(
+	          'label',
+	          { htmlFor: answer.id },
+	          ' ',
+	          answer.text
+	        )
+	      );
+	    });
+	  },
+	  trueFalseAnswerBody: function () {
+	    var that = this;
+	    return that.props.question.answers.map(function (answer, idx) {
+	      return React.createElement(
+	        'div',
+	        { key: idx },
+	        React.createElement('input', {
+	          id: answer.id,
+	          className: 'multiple-choice-answer',
+	          onClick: that.updateAnswerChoice,
+	          name: that.props.question.id,
+	          type: 'radio',
+	          value: answer.id }),
+	        React.createElement(
+	          'label',
+	          { htmlFor: answer.id },
+	          ' ',
+	          answer.text
+	        )
+	      );
+	    });
+	  },
+	  fillInTheBlankAnswerBody: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement('input', {
+	        id: "fill-in-the-blank-answer" + this.props.question.id,
+	        className: 'fill-in-the-blank-answer',
+	        onClick: this.updateAnswerText,
+	        type: 'text',
+	        onChange: this.updateAnswerText })
+	    );
+	  },
+	  updateAnswerChoice: function (e) {
+	    this.setState({ answerChoice: e.target.value });
+	  },
+	  updateAnswerText: function (e) {
+	    this.setState({ answerText: e.target.value });
+	  },
+	  submitAnswer: function (e) {
+	    e.preventDefault();
+
+	    // var answerId = null;
+	    // var answerText = null;
+
+	    // if (typeof this.state.answerChoice === "string") {
+	    //   answerText = this.state.answerChoice;
+	    // } else if (typeof this.state.answerChoice === "number") {
+	    //   answerId = this.state.answerChoice;
+	    // }
+
+	    var answerParams = {
+	      user_id: 1,
+	      answer_id: this.state.answerChoice,
+	      answer_text: this.state.answerText
+	    };
+
+	    ApiUtil.submitAnswer(answerParams, this.props.question.id, this.revealAnswer);
+	  },
+	  revealAnswer: function (result) {
+	    this.setState({ questionResult: result });
+	    for (var i = 0; i < result.answers.length; i++) {
+	      if (this.props.question.question_type === "fill in the blank") {
+	        document.getElementById("fill-in-the-blank-answer" + this.props.question.id).disabled = true;
+	      } else {
+	        document.getElementById(result.answers[i].id).disabled = true;
+	      }
+	    }
+	  },
+	  buttonOrResult: function () {
+	    if (!this.state.questionResult) {
+	      return React.createElement(
+	        'button',
+	        {
+	          className: 'submit-button',
+	          onClick: this.submitAnswer },
+	        'Submit'
+	      );
+	    } else {
+	      if (this.state.questionResult.is_correct) {
+	        return React.createElement(
+	          ReactCSSTransitionGroup,
+	          { transitionName: 'reveal-answer',
+	            transitionAppear: true,
+	            transitionAppearTimeout: 0,
+	            transitionEnterTimeout: 0,
+	            transitionLeaveTimeout: 0 },
+	          React.createElement(
+	            'div',
+	            { key: this.state.questionResult.correct_answer_id },
+	            React.createElement(
+	              'span',
+	              { className: 'correct' },
+	              'Correct!'
+	            ),
+	            React.createElement('br', null),
+	            React.createElement('br', null),
+	            React.createElement(
+	              'span',
+	              { className: 'explanation' },
+	              this.state.questionResult.explanation
+	            )
+	          )
+	        );
+	      } else {
+	        return React.createElement(
+	          ReactCSSTransitionGroup,
+	          { transitionName: 'reveal-answer',
+	            transitionAppear: true,
+	            transitionAppearTimeout: 0,
+	            transitionEnterTimeout: 0,
+	            transitionLeaveTimeout: 0 },
+	          React.createElement(
+	            'div',
+	            { key: this.state.questionResult.correct_answer_id },
+	            React.createElement(
+	              'span',
+	              { className: 'incorrect' },
+	              'Incorrect!'
+	            ),
+	            React.createElement('br', null),
+	            React.createElement('br', null),
+	            'Correct answer: ',
+	            this.state.questionResult.correct_answer.text,
+	            React.createElement('br', null),
+	            React.createElement(
+	              'span',
+	              { className: 'explanation' },
+	              this.state.questionResult.explanation
+	            )
+	          )
+	        );
+	      }
+	    }
+	  },
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      { className: 'question' },
+	      React.createElement(
+	        'div',
+	        { className: 'question-text' },
+	        React.createElement(
+	          'b',
+	          null,
+	          this.props.number,
+	          '.'
+	        ),
+	        ' ',
+	        this.props.question.text
+	      ),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'div',
+	        { className: 'answer-body' },
+	        this.showAnswerBody(),
+	        React.createElement('br', null),
+	        this.buttonOrResult()
+	      ),
+	      React.createElement('br', null),
+	      React.createElement('br', null)
+	    );
+	  }
+	});
+
+	module.exports = Question;
 
 /***/ },
 /* 255 */

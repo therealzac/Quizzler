@@ -2,6 +2,7 @@ var React = require('react');
 var QuizStore = require('../stores/quizStore');
 var ApiUtil = require('../apiUtil/apiUtil');
 var Modal = require('react-modal');
+var UserQuizStore = require('../stores/userQuizStore');
 
 const customStyles = {
   content: {
@@ -20,14 +21,21 @@ var Navbar = React.createClass({
       quiz: {},
       modalOpen: false,
       questionsAnswered: 0,
-      questionsCorrect: 0
+      questionsCorrect: 0,
+      timeRemaining: null,
+      userQuiz: null,
     };
   },
   componentDidMount: function() {
-    this.quizListener = QuizStore.addListener(this._onChange);
+    this.quizListener = QuizStore.addListener(this._quizChange);
     ApiUtil.fetchQuiz(1);
+    this.userQuizListener = UserQuizStore.addListener(this._userQuizChange);
   },
-  _onChange: function () {
+  componentWillUnmount: function() {
+    this.quizListener.remove();
+    this.userQuizListener.remove();
+  },
+  _quizChange: function () {
     var that = this;
 
     this.setState({
@@ -39,6 +47,22 @@ var Navbar = React.createClass({
     if (QuizStore.questionsAnswered() === this.state.quiz.number_of_questions) {
       window.setTimeout(function () { that.setState({ modalOpen: true }) }, 1500);
     };
+
+    ApiUtil.fetchUserQuiz(this.state.quiz.id);
+  },
+  _userQuizChange: function() {
+    this.setState({userQuiz: UserQuizStore.all()});
+    var timeElapsed = Math.floor((Date.now() - this.state.userQuiz.startTime) / 1000)
+    this.setState({
+      timeRemaining: this.state.quiz.max_time * 60 - timeElapsed
+    })
+    if (this.timerTicker === undefined) {
+      this.timerTicker = window.setInterval(function() {
+        this.setState({
+          timeRemaining: this.state.timeRemaining - 1,
+        })
+      }.bind(this), 1000);
+    }
   },
   renderModal: function () {
     var appElement = document.getElementById('root');
@@ -78,7 +102,7 @@ var Navbar = React.createClass({
         <div className="logo">App Academy Quizzler</div>
         <ul className="header-right">
           <li>{this.state.questionsAnswered}/{this.state.quiz.number_of_questions} Questions answered</li>
-          <li>Time remaining: {this.state.quiz.max_time}</li>
+          <li>Time remaining: {this.state.timeRemaining}</li>
         </ul>
 
         <div className="modal">

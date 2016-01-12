@@ -23,6 +23,7 @@ var Question = React.createClass({
       this.setState({
         questionResult: questionResult
       })
+      this.revealAnswer(questionResult);
     };
   },
   showAnswerBody: function() {
