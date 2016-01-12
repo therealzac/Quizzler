@@ -2,6 +2,8 @@ var React = require('react');
 var QuizStore = require('../stores/quizStore');
 var QuestionResultStore = require('../stores/questionResultStore');
 var Question = require('./question.jsx');
+var ApiUtil = require('../apiUtil/apiUtil.js');
+var UserQuizStore = require('../stores/userQuizStore');
 
 var Quiz = React.createClass({
   getInitialState: function () {
@@ -9,29 +11,65 @@ var Quiz = React.createClass({
       startButtonClass: "start-button",
       quizOpen: false,
       quiz: QuizStore.quiz(),
-      questionResults: {}
+      questionResults: {},
+      userQuiz: null
      };
   },
   handleClick: function () {
     this.setState({ startButtonClass: "hidden", quizOpen: true });
+    ApiUtil.createUserQuiz(this.state.quiz.id);
   },
   componentDidMount: function() {
-    this.quizListener = QuizStore.addListener(this._onChange);
-    this.questionResultListener = QuestionResultStore.addListener(this._onChange);
+    this.quizListener = QuizStore.addListener(this._quizChange);
+    this.questionResultListener = QuestionResultStore.addListener(this._questionResultChange);
+    this.userQuizListener = UserQuizStore.addListener(this._userQuizChange);
+    ApiUtil.fetchUserQuiz(1);
+    ApiUtil.fetchAllQuestionResults(1);
   },
   componentWillUnmount: function() {
     this.quizListener.remove();
     this.questionResultListener.remove();
   },
-  _onChange: function() {
-    var quiz = QuizStore.quiz();
-    var questionResults = QuestionResultStore.all();
-
+  _quizChange: function() {
     this.setState({
-      quiz: quiz,
-      questionResults: questionResults
-    });
+      quiz: QuizStore.quiz()
+    })
   },
+  _questionResultChange: function() {
+    this.setState({
+      questionResults: QuestionResultStore.all()
+    })
+  },
+  _userQuizChange: function() {
+    this.setState({
+      userQuiz: UserQuizStore.all()
+    })
+
+    if (this.state.userQuiz.startTime) {
+      this.setState({
+        startButtonClass: "hidden",
+        quizOpen: true
+      })
+    }
+  },
+  // _onChange: function() {
+  //   var quiz = QuizStore.quiz();
+  //   var questionResults = QuestionResultStore.all();
+  //   var userQuiz = UserQuizStore.all();
+  //
+  //   this.setState({
+  //     quiz: quiz,
+  //     questionResults: questionResults,
+  //     userQuiz: userQuiz
+  //   });
+  //
+  //   if (userQuiz.startTime) {
+  //     this.setState({
+  //       startButtonClass: "hidden",
+  //       quizOpen: true
+  //     })
+  //   }
+  // },
   renderQuiz: function () {
     if (!this.state.quizOpen){
       return "";
