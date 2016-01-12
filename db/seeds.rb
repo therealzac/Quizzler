@@ -1,12 +1,9 @@
-
-
 Quiz.create!({
   title: "Ruby Quiz",
   day: "W1D1",
   max_time: 60,
   number_of_questions: 3
 })
-
 
 Question.create!({
   question_type: "true false",
@@ -59,15 +56,16 @@ Question.create!({
   correct_answer_id: 8,
   explanation: "Indexing starts from 0"
   })
-  Answer.create!({
-    text: "[]",
-    question_id: 3
-  })
-  Answer.create!({
-    text: "{}",
-    question_id: 3
-  })
-  Answer.create!({
-    text: "<>",
-    question_id: 3
-  })
+
+Answer.create!({
+  text: "[]",
+  question_id: 3
+})
+Answer.create!({
+  text: "{}",
+  question_id: 3
+})
+Answer.create!({
+  text: "<>",
+  question_id: 3
+})
