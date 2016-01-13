@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   root "static_pages#root"
   resources :admins, only: [:new, :create, :edit, :update, :destroy, :show]
-  resources :quizzes,only: [:new]
-  resources :quizzes,except: [:new], defaults: {format: :json} do
+  resources :quizzes,only: [:new, :edit]
+  resources :quizzes,except: [:new, :edit], defaults: {format: :json} do
 
     collection do
       get :admin_index, defaults: {format: :html}

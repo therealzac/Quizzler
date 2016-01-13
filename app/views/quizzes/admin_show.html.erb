@@ -1,11 +1,4 @@
-<div style="width:100%; background: #C00A0A;  position: relative;
-  display: inline-block;
-  color: white;
-  font-family: 'Lato';
-  font-weight: bold;
-  height:89px;
-  "
-}>
+<div class="admin-nav">
   <div style="  float: left;
     padding: 30px;
     padding-left: 100px;
@@ -44,7 +37,14 @@ Quiz Title:
 </div>
 
 <% @quiz.questions.each do |question| %>
+
+
+
   <div class='quiz-admin-show-individual' style="border: 3px solid black;border-radius:5px;margin:5px;width:500px;padding:10px;">
+    <br>
+    <div class="green-submit-button">
+    <%= link_to "Edit Question", edit_quiz_question_path({id: question.id, quiz_id:@quiz.id})%>
+    </div>
     <br>
       <% if question.correct_answer_id === nil %>
         <div style="color:red;">No Correct Answer Selected</div>
