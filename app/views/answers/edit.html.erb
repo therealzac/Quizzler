@@ -4,7 +4,7 @@
     padding-left: 100px;
     font-size: 24px;">App Academy Teacher Portal</div>
 </div>
-<h3>Add a new Answer</h3>
+<h3>Edit Answer</h3>
 <br>
 
 Question:
@@ -26,7 +26,9 @@ Question Type:
 </div>
 <br><br>
 
-<form action="<%= quiz_question_answers_url %>" method="post">
+<form action="<%= quiz_question_answer_url({id:@answer.id, question_id: @question.id}) %>" method="post">
+  <input type="hidden" name="_method" value="PATCH">
+
 
     <input
       type="hidden"
@@ -48,7 +50,7 @@ Question Type:
       value="<%= @answer.question_id %>">
       <br>
 
-      <input type="submit" value="Add Answer"
+      <input type="submit" value="Edit Answer"
               style=" background-color:#44c767;
                       -moz-border-radius:28px;
                       -webkit-border-radius:28px;

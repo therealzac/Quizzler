@@ -5,6 +5,9 @@ class QuestionsController < ApplicationController
 
     @question.quiz_id = params[:quiz_id]
   end
+  def edit
+      @question = Question.find(params[:id])
+  end
 
   def index
     @questions = Question.all

@@ -4,6 +4,7 @@ class Question < ActiveRecord::Base
   validates :question_type, :quiz_id, :text, :explanation, presence: true
 
   has_many :answers
+  has_many :answer_choices
   belongs_to :quiz
   belongs_to :correct_answer,
     class_name: "Answer",

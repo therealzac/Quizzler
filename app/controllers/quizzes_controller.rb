@@ -11,6 +11,8 @@ class QuizzesController < ApplicationController
 
   end
 
+
+
   def index
     @quizzes = Quiz.all
     render :index
@@ -35,6 +37,20 @@ class QuizzesController < ApplicationController
     def admin_show
 
         @quiz = Quiz.find(params[:id])
+    end
+
+    def edit
+      @quiz = Quiz.find(params[:id])
+    end
+
+    def update
+      @quiz = Quiz.find(params[:id])
+
+      if @quiz.update(quiz_params)
+        redirect_to '/quizzes/admin_show/' + @quiz.id.to_s + '/'
+      else
+        render :edit
+      end
     end
 
     def destroy
