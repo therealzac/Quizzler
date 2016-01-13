@@ -8,7 +8,7 @@ class AnswersController < ApplicationController
     end
 
     def index
-      @answerzes = Answer.all
+      @answers = Answer.all
       render :index
     end
 
@@ -27,6 +27,22 @@ class AnswersController < ApplicationController
       def show
 
         @answer = Answer.find(params[:id])
+      end
+
+      def edit
+        @question = Question.find(params[:question_id])
+        @answer = Answer.find(params[:id])
+
+      end
+
+      def update
+        @answer = Answer.find(params[:id])
+
+        if @answer.update(answer_params)
+          redirect_to '/quizzes/admin_show/' + @answer.question.quiz_id.to_s + '/'
+        else
+          render :edit
+        end
       end
 
 
