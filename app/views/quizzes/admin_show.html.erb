@@ -38,11 +38,6 @@ Quiz Title:
 
 <% @quiz.questions.each do |question| %>
 
-<div class="quiz-stats">
-<!-- We need the answer choices so we can tally and then make the graphs -->
-
-<%= pie_chart({"Football" => 10, "Basketball" => 5}) %>
-</div>
 
 
   <div class='quiz-admin-show-individual' style="border: 3px solid black;border-radius:5px;margin:5px;width:500px;padding:10px;">
@@ -118,6 +113,14 @@ Quiz Title:
       </div>
     <% end %>
     </form>
+    <div class="quiz-stats">
+      <!-- We need the answer choices so we can tally and then make the graphs -->
+      <br>
+      Question Results:
+      <% answers= Hash.new(0) %>
+      <% question.answer_choices.each {|el| answers[el.answer.text] += 1 } %>
+      <%= pie_chart answers %>
+    </div>
 
   </div>
 
