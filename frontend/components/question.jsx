@@ -116,6 +116,11 @@ var Question = React.createClass({
   },
   revealAnswer: function (result) {
     this.setState({questionResult: result})
+
+    if (document.getElementById(result.selected_answer_id)) {
+      document.getElementById(result.selected_answer_id).checked = true;
+    }
+
     for (var i = 0; i < result.answers.length; i++) {
       if (this.props.question.question_type === "fill in the blank") {
         document.getElementById("fill-in-the-blank-answer" + this.props.question.id).disabled = true;
@@ -123,6 +128,7 @@ var Question = React.createClass({
         document.getElementById(result.answers[i].id).disabled = true;
       }
     }
+
   },
   buttonOrResult: function () {
     if (!this.state.questionResult) {

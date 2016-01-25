@@ -13,6 +13,7 @@ Question.create!({
   explanation: "Indexing starts from 0"
 })
 
+
 Answer.create!({
   text: "True",
   question_id: 1
@@ -53,19 +54,23 @@ Question.create!({
   question_type: "fill in the blank",
   quiz_id: 1,
   text: "The shortest way to create a hash is ____",
-  correct_answer_id: 8,
-  explanation: "Indexing starts from 0"
+  correct_answer_id: 7,
+  explanation: "That's how you make a hash"
   })
 
-Answer.create!({
-  text: "[]",
-  question_id: 3
-})
+# Answer.create!({
+#   text: "[]",
+#   question_id: 3
+# })
 Answer.create!({
   text: "{}",
   question_id: 3
 })
+# Answer.create!({
+#   text: "<>",
+#   question_id: 3
+# })
 Answer.create!({
-  text: "<>",
+  text: "incorrect answer",
   question_id: 3
 })

@@ -96,13 +96,20 @@ var Navbar = React.createClass({
   closeModal: function() {
     this.setState({ modalOpen: false });
   },
+  timeRemainingDisplay: function() {
+    if (this.state.timeRemaining <= 60) {
+      return this.state.timeRemaining + " seconds";
+    } else {
+      return Math.floor(this.state.timeRemaining / 60) + " minutes"
+    }
+  },
   render: function () {
     return (
       <div className="navbar">
         <div className="logo">App Academy Quizzler</div>
         <ul className="header-right">
           <li>{this.state.questionsAnswered}/{this.state.quiz.number_of_questions} Questions answered</li>
-          <li>Time remaining: {this.state.timeRemaining}</li>
+          <li>Time remaining: {this.timeRemainingDisplay()}</li>
         </ul>
 
         <div className="modal">
