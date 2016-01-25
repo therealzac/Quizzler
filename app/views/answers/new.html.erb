@@ -1,0 +1,66 @@
+<div class="admin-nav">
+  <div style="  float: left;
+    padding: 30px;
+    padding-left: 100px;
+    font-size: 24px;">App Academy Teacher Portal</div>
+</div>
+<h3>Add a new Answer</h3>
+<br>
+
+Question:
+<%= @question.text%>
+<br>
+Question Type:
+<%= @question.question_type%>
+<br<
+  <div class="answers" style="margin-left:30px;">
+    <% @question.answers.each do |answer| %>
+    <br>
+    Answer:
+    <%= answer.text %>
+    <% if answer.id === @question.correct_answer_id %>
+    <%= "Correct Answer" %>
+    <% end %>
+    <br>
+    <% end %>
+</div>
+<br><br>
+
+<form action="<%= quiz_question_answers_url %>" method="post">
+
+    <input
+      type="hidden"
+      name="authenticity_token"
+      value="<%= form_authenticity_token %>">
+
+
+      <label for="answer_text">Answer Text</label>
+      <input type="text"
+      name="answer[text]"
+      style="border: solid 2px #969696;"
+      value="<%= @answer.text %>">
+      <br>
+
+
+      <input type="hidden"
+      name="answer[question_id]"
+      style="border: solid 2px #969696;"
+      value="<%= @answer.question_id %>">
+      <br>
+
+      <input type="submit" value="Add Answer"
+              style=" background-color:#44c767;
+                      -moz-border-radius:28px;
+                      -webkit-border-radius:28px;
+                      border-radius:28px;
+                      border:1px solid #18ab29;
+                      display:inline-block;
+                      cursor:pointer;
+                      color:#ffffff;
+                      font-family:Arial;
+                      font-size:17px;
+                      padding:16px 31px;
+                      text-decoration:none;
+                      text-shadow:0px 1px 0px #2f6627;">
+
+  </form>

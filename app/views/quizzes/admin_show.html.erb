@@ -1,0 +1,175 @@
+<div class="admin-nav">
+  <div style="  float: left;
+    padding: 30px;
+    padding-left: 100px;
+    font-size: 24px;">App Academy Teacher Portal</div>
+</div>
+
+
+
+<a style=" background-color:#4285F4;
+        -moz-border-radius:28px;
+        -webkit-border-radius:28px;
+        border-radius:28px;
+        border:1px solid #18ab29;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:17px;
+        padding:16px 31px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #2f6627;"
+href="/quizzes/admin_index/"> Return to Test List </a>
+<br><br>
+<div style="padding:7px;">
+Quiz Title:
+<%= @quiz.title %> </a>
+<br>
+<label>Number of Questions:</label>
+<%= @quiz.number_of_questions %>
+<br>
+<label>Quiz Day:</label>
+<%= @quiz.day %>
+<br>
+<label>Time Allowed:</label>
+<%= @quiz.max_time %>
+</div>
+
+<% @quiz.questions.each do |question| %>
+
+
+
+  <div class='quiz-admin-show-individual' style="border: 3px solid black;border-radius:5px;margin:5px;width:500px;padding:10px;">
+    <br>
+    <div class="green-submit-button">
+    <%= link_to "Edit Question", edit_quiz_question_path({id: question.id, quiz_id:@quiz.id})%>
+    </div>
+    <br>
+      <% if question.correct_answer_id === nil %>
+        <div style="color:red;">No Correct Answer Selected</div>
+        <br>
+      <% else %>
+        Correct answer:
+
+        <%= question.correct_answer.text%>
+        <br>
+        <br>
+      <% end %>
+
+    Question:
+    <%= question.text%>
+    <br>
+    Type:
+    <%= question.question_type%>
+    <br>
+    Explanation:
+    <%= question.explanation %>
+
+  <div class="answers" style="margin-left:30px;">
+    Answer:
+
+    <form action="/quizzes/<%=question.quiz_id%>/questions/<%=question.id%>" method="post">
+        <input type="hidden" name="_method" value="patch">
+
+          <input
+            type="hidden"
+            name="authenticity_token"
+            value="<%= form_authenticity_token %>">
+      <% question.answers.each do |answer| %>
+        <br>
+        <% if answer.id === question.correct_answer_id %>
+
+          <input type="radio"
+                name="question[correct_answer_id]"
+                value="<%= answer.id%>"
+                style="margin:3px;"
+                checked
+                onclick=this.form.submit();>
+                <%= answer.text%>
+                <div class="red-delete-answer">
+                  <%= link_to "Delete Answer",
+                  quiz_question_answer_url({quiz_id: @quiz.id,question_id: question.id  , id: answer.id }), method: :delete %>
+                </div>
+
+
+      <% else %>
+
+        <input type="radio"
+              name="question[correct_answer_id]"
+              value="<%= answer.id%>"
+              style="margin:3px;"
+              onclick=this.form.submit();>
+              <%= answer.text%>
+              <div class="red-delete-answer">
+                <%= link_to "Delete Answer",
+                quiz_question_answer_url({quiz_id: @quiz.id,question_id: question.id  , id: answer.id }), method: :delete %>
+              </div>
+
+
+      <% end %>
+      <div class="green-edit"
+        <%= link_to "Edit Answer", edit_quiz_question_answer_path({id: answer.id, question_id: question.id, quiz_id: @quiz.id})%>
+      </div>
+    <% end %>
+    </form>
+    <div class="quiz-stats">
+      <!-- We need the answer choices so we can tally and then make the graphs -->
+      <br>
+      Question Results:
+      <% answers= Hash.new(0) %>
+      <% question.answer_choices.each {|el| answers[el.answer.text] += 1 } %>
+      <%= pie_chart answers %>
+    </div>
+
+  </div>
+
+  <a style="background-color:#4285F4;
+          -moz-border-radius:28px;
+          -webkit-border-radius:28px;
+          border-radius:28px;
+          border:1px solid #18ab29;
+          display:inline-block;
+          cursor:pointer;
+          color:#ffffff;
+          font-family:Arial;
+          font-size:12px;
+          padding:5px 10px;
+          text-decoration:none;
+          text-shadow:0px 1px 0px #2f6627;"
+  href="/quizzes/<%= @quiz.id %>/questions/<%=question.id%>/answers/new"> Add an Answer </a>
+<div style="background-color:red;
+        -moz-border-radius:28px;
+        -webkit-border-radius:28px;
+        border-radius:28px;
+        border:1px solid #18ab29;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:12px;
+        padding:5px 10px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #2f6627;">
+  <%= link_to "Delete Question", quiz_question_url({id: question.id, quiz_id: @quiz.id}), method: :delete %>
+</div>
+<br>
+</div>
+<% end %>
+
+<div style='margin-bottom:100px;'>
+<a style=" background-color:#4285F4;
+        -moz-border-radius:28px;
+        -webkit-border-radius:28px;
+        border-radius:28px;
+        border:1px solid #18ab29;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:17px;
+        padding:16px 31px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #2f6627;"
+href="/quizzes/<%= @quiz.id %>/questions/new"> Add a Question </a>
+</div>
