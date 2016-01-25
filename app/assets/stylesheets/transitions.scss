@@ -1,0 +1,16 @@
+.reveal-answer-appear {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+
+  -webkit-transition: all 1s;
+     -moz-transition: all 1s;
+      -ms-transition: all 1s;
+       -o-transition: all 1s;
+          transition: all 1s;
+}
+
+.reveal-answer-appear.reveal-answer-appear-active {
+  max-height: 100px;
+  opacity: 1;
+}

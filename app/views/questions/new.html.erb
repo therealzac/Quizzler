@@ -1,0 +1,73 @@
+<div class="admin-nav">
+  <div style="  float: left;
+    padding: 30px;
+    padding-left: 100px;
+    font-size: 24px;">App Academy Teacher Portal</div>
+</div>
+<h3>Add a new Question</h3>
+<br>
+
+<form action="<%= quiz_questions_url %>" method="post">
+
+    <input
+      type="hidden"
+      name="authenticity_token"
+      value="<%= form_authenticity_token %>">
+
+      <input type="hidden"
+      name="question[quiz_id]"
+      style="border: solid 2px #969696;"
+      value="<%= @question.quiz_id %>">
+      <br>
+
+      <label for="question_text">Question Text</label>
+      <input type="text"
+      name="question[text]"
+      style="border: solid 2px #969696;"
+      value="<%= @question.text %>">
+      <br>
+
+      This will be a radio button
+    <label for="question_question_type">Question Type</label>
+    <input type="question_type"
+           name="question[question_type]"
+           style="border: solid 2px #969696;"
+           value="<%= @question.question_type %>">
+    <br>
+
+
+    <br>
+    <label for="question_explanation">Answer Explanation</label>
+    <br>
+    <input type="text"
+    <textarea
+      name="question[explanation]"
+      id="question_explanation" rows="4" cols="50"
+      style="	width: 600px;
+            	height: 120px;
+            	border: 3px solid #969696;
+            	padding: 5px;
+              margin:3px;
+            	font-family: Tahoma, sans-serif;
+            	background-image: url(bg.gif);
+            	background-position: bottom right;
+            	background-repeat: no-repeat;"></textarea>
+      <br>
+
+
+
+    <input type="submit" value="Add Question"
+            style=" background-color:#44c767;
+                  	-moz-border-radius:28px;
+                  	-webkit-border-radius:28px;
+                  	border-radius:28px;
+                  	border:1px solid #18ab29;
+                  	display:inline-block;
+                  	cursor:pointer;
+                  	color:#ffffff;
+                  	font-family:'Lato';
+                  	font-size:17px;
+                  	padding:16px 31px;
+                  	text-decoration:none;
+                  	text-shadow:0px 1px 0px #2f6627;">
+  </form>

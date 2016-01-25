@@ -1,0 +1,27 @@
+
+
+
+#
+default: &default
+  adapter: postgresql
+  encoding: unicode
+
+  pool: 5
+
+development:
+  <<: *default
+  database: Quizzler_development
+
+
+
+test:
+  <<: *default
+  database: Quizzler_test
+
+
+#
+production:
+  <<: *default
+  database: Quizzler_production
+  username: Quizzler
+  password: <%= ENV['QUIZZLER_DATABASE_PASSWORD'] %>

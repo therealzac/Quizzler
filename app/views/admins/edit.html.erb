@@ -1,0 +1,25 @@
+<h1>Edit User!</h1>
+<form action="<%= admin_url(@admin) %>" method="post">
+  <input type="hidden" name="authenticity_token"
+         value="<%= form_authenticity_token %>">
+
+  <input type="hidden" name="_method" value="patch">
+
+  <label for="admin_email">Email</label>
+  <input
+    type="text"
+    name="admin[email]"
+    value="<%= @admin.email %>"
+    id="admin_email">
+    <br>
+
+  <label for="admin_password">Password</label>
+  <input
+    type="password"
+    name="admin[password]"
+    id="admin_password">
+
+    <input type="hidden" name="admin[type_id]" value="1">
+
+  <input type="submit" value="Update Admin">
+</form>

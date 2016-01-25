@@ -1,0 +1,53 @@
+
+
+
+
+<div class="admin-nav">
+  <div style="  float: left;
+    padding: 30px;
+    padding-left: 100px;
+    font-size: 24px;">App Academy Teacher Portal</div>
+</div>
+
+
+<h3 class="admin-views-header">Quizzes</h3>
+
+
+<% @quizzes.each do |quiz| %>
+<br>
+<div class="admin-views-quiz-box">
+  <div class="admin-quiz-name">
+     <a style="color:blue;"
+        href="http://localhost:3000/quizzes/admin_show/<%= quiz.id %>/"> <%= quiz.title %> </a>
+  </div>
+    <br>
+    <label>Number of Questions:</label>
+    <%= quiz.number_of_questions %>
+    <br>
+    <label>Quiz Day:</label>
+    <%= quiz.day %>
+    <br>
+    <label>Time Allowed:</label>
+    <%= quiz.max_time %>
+
+    <br>
+    <div class="quiz-box-delete-button">
+      <%= link_to "Delete Quiz", quiz_url({id: quiz.id}), method: :delete %>
+    </div>
+    <div class="quiz-box-edit-button">
+      <%= link_to "Edit Quiz", edit_quiz_path(quiz.id)%>
+    </div>
+  </div>
+
+  <% end %>
+  <br>
+
+<br>
+<br>
+<a class="add-a-quiz-button"
+href="/quizzes/new"> Add a Quiz </a>
+
+<br>
+<br>
+
+</a>
