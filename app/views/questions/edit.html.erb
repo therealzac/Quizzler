@@ -4,10 +4,10 @@
     padding-left: 100px;
     font-size: 24px;">App Academy Teacher Portal</div>
 </div>
-<h3>Edit the Question</h3>
+<h3 class="admin-header">Edit the Question</h3>
 <br>
 
-<form action="<%= quiz_question_path({id:@question.id}) %>" method="post">
+<form action="<%= quiz_question_path({id:@question.id}) %>" method="post" class="question-edit">
   <input type="hidden" name="_method" value="PATCH">
 
     <input
@@ -24,16 +24,21 @@
       <label for="question_text">Question Text</label>
       <input type="text"
       name="question[text]"
-      style="border: solid 2px #969696;"
+      style="border: solid 2px #969696; min-width: 500px"
       value="<%= @question.text %>">
       <br>
 
-      This will be a radio button
     <label for="question_question_type">Question Type</label>
-    <input type="question_type"
+    <select name="question[question_type]">
+      <option value="true false">true false</option>
+      <option value="fill in the blank">fill in the blank</option>
+      <option value="multiple choice">multiple choice</option>
+    </select>
+
+    <!-- <input type="question_type"
            name="question[question_type]"
            style="border: solid 2px #969696;"
-           value="<%= @question.question_type %>">
+           value="<%= @question.question_type %>"> -->
     <br>
 
 
@@ -58,5 +63,5 @@
 
 
 
-    <input type="submit" value="Edit Question" class="green-submit-button">
+    <input type="submit" value="Edit Question" class="question-edit-submit">
   </form>
