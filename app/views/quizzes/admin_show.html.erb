@@ -7,22 +7,9 @@
 
 
 
-<a style=" background-color:#4285F4;
-        -moz-border-radius:28px;
-        -webkit-border-radius:28px;
-        border-radius:28px;
-        border:1px solid #18ab29;
-        display:inline-block;
-        cursor:pointer;
-        color:#ffffff;
-        font-family:Arial;
-        font-size:17px;
-        padding:16px 31px;
-        text-decoration:none;
-        text-shadow:0px 1px 0px #2f6627;"
-href="/quizzes/admin_index/"> Return to Test List </a>
+<a class="back-to-edit-button" href="/quizzes/admin_index/"> Return to Test List </a>
 <br><br>
-<div style="padding:7px;">
+<div class="quiz-info">
 Quiz Title:
 <%= @quiz.title %> </a>
 <br>
@@ -38,24 +25,12 @@ Quiz Title:
 
 <% @quiz.questions.each do |question| %>
 
-
-
-  <div class='quiz-admin-show-individual' style="border: 3px solid black;border-radius:5px;margin:5px;width:500px;padding:10px;">
+  <div class='quiz-admin-show-individual'>
     <br>
     <div class="green-submit-button">
     <%= link_to "Edit Question", edit_quiz_question_path({id: question.id, quiz_id:@quiz.id})%>
     </div>
     <br>
-      <% if question.correct_answer_id === nil %>
-        <div style="color:red;">No Correct Answer Selected</div>
-        <br>
-      <% else %>
-        Correct answer:
-
-        <%= question.correct_answer.text%>
-        <br>
-        <br>
-      <% end %>
 
     Question:
     <%= question.text%>
@@ -63,10 +38,18 @@ Quiz Title:
     Type:
     <%= question.question_type%>
     <br>
+    <% if question.correct_answer_id === nil %>
+    <div style="color:red;">No Correct Answer Selected</div>
+    <br>
+    <% else %>
+    Correct answer:
+    <%= question.correct_answer.text%>
+    <br>
+    <% end %>
     Explanation:
     <%= question.explanation %>
 
-  <div class="answers" style="margin-left:30px;">
+  <div class="answers">
     Answer:
 
     <form action="/quizzes/<%=question.quiz_id%>/questions/<%=question.id%>" method="post">
@@ -83,7 +66,7 @@ Quiz Title:
           <input type="radio"
                 name="question[correct_answer_id]"
                 value="<%= answer.id%>"
-                style="margin:3px;"
+                style="margin:3px; margin-bottom: 25px;"
                 checked
                 onclick=this.form.submit();>
                 <%= answer.text%>
@@ -98,7 +81,7 @@ Quiz Title:
         <input type="radio"
               name="question[correct_answer_id]"
               value="<%= answer.id%>"
-              style="margin:3px;"
+              style="margin:3px; margin-bottom: 25px;"
               onclick=this.form.submit();>
               <%= answer.text%>
               <div class="red-delete-answer">
@@ -117,7 +100,7 @@ Quiz Title:
       <!-- We need the answer choices so we can tally and then make the graphs -->
       <br>
       Question Results:
-      <% answers= Hash.new(0) %>
+      <% answers = Hash.new(0) %>
       <% question.answer_choices.each {|el| answers[el.answer.text] += 1 } %>
       <%= pie_chart answers %>
     </div>
@@ -132,7 +115,7 @@ Quiz Title:
           display:inline-block;
           cursor:pointer;
           color:#ffffff;
-          font-family:Arial;
+          font-family:'Lato';
           font-size:12px;
           padding:5px 10px;
           text-decoration:none;
@@ -146,11 +129,12 @@ Quiz Title:
         display:inline-block;
         cursor:pointer;
         color:#ffffff;
-        font-family:Arial;
+        font-family:'Lato';
         font-size:12px;
         padding:5px 10px;
         text-decoration:none;
-        text-shadow:0px 1px 0px #2f6627;">
+        text-shadow:0px 1px 0px #2f6627;
+        float: right;">
   <%= link_to "Delete Question", quiz_question_url({id: question.id, quiz_id: @quiz.id}), method: :delete %>
 </div>
 <br>
@@ -158,18 +142,6 @@ Quiz Title:
 <% end %>
 
 <div style='margin-bottom:100px;'>
-<a style=" background-color:#4285F4;
-        -moz-border-radius:28px;
-        -webkit-border-radius:28px;
-        border-radius:28px;
-        border:1px solid #18ab29;
-        display:inline-block;
-        cursor:pointer;
-        color:#ffffff;
-        font-family:Arial;
-        font-size:17px;
-        padding:16px 31px;
-        text-decoration:none;
-        text-shadow:0px 1px 0px #2f6627;"
+<a class="add-a-question-button"
 href="/quizzes/<%= @quiz.id %>/questions/new"> Add a Question </a>
 </div>
