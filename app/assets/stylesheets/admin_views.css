@@ -3,6 +3,67 @@
   font-size: 20px;
 }
 
+.admin-nav{
+  width:100%;
+  background: #C00A0A;
+  position: relative;
+  display: inline-block;
+  color: white;
+  font-family: 'Lato';
+  font-weight: bold;
+  height:89px;
+}
+
+.green-submit-button{
+  background-color:#44c767;
+  -moz-border-radius:28px;
+  -webkit-border-radius:28px;
+  border-radius:28px;
+  border:1px solid #18ab29;
+  display:inline-block;
+  cursor:pointer;
+  color:#ffffff;
+  font-family:'Lato';
+  font-size:17px;
+  padding:16px 31px;
+  text-decoration:none;
+  text-shadow:0px 1px 0px #2f6627;
+}
+
+.red-delete-answer{
+          background-color:red;
+         -moz-border-radius:28px;
+         -webkit-border-radius:28px;
+         border-radius:28px;
+         border:1px solid #18ab29;
+         display:inline-block;
+         margin-bottom:10px;
+         cursor:pointer;
+         color:#ffffff;
+         font-family:'Lato';
+         font-size:12px;
+         padding:5px 5px;
+         text-decoration:none;
+         text-shadow:0px 1px 0px #2f6627;
+}
+
+.green-edit{
+          background-color:#44c767;
+         -moz-border-radius:28px;
+         -webkit-border-radius:28px;
+         border-radius:28px;
+         border:1px solid #18ab29;
+         display:inline-block;
+         margin-bottom:10px;
+         cursor:pointer;
+         color:#ffffff;
+         font-family:'Lato';
+         font-size:12px;
+         padding:5px 5px;
+         text-decoration:none;
+         text-shadow:0px 1px 0px #2f6627;
+}
+
 .admin-header {
   text-align: center;
 }
@@ -26,7 +87,7 @@
   display:inline-block;
   cursor:pointer;
   color:#ffffff;
-  font-family:Arial;
+  font-family:'Lato';
   font-size:12px;
   padding:5px 10px;
   text-decoration:none;
@@ -44,7 +105,7 @@
   display:inline-block;
   cursor:pointer;
   color:#ffffff;
-  font-family:Arial;
+  font-family:'Lato';
   font-size:12px;
   padding:5px 10px;
   text-decoration:none;
@@ -62,7 +123,7 @@
   display:inline-block;
   cursor:pointer;
   color:#ffffff;
-  font-family:Arial;
+  font-family:'Lato';
   font-size:17px;
   padding:16px 31px;
   text-decoration:none;
@@ -70,18 +131,20 @@
   margin-left: calc(50% - 75px);
 }
 
-.admin-nav{
-  width:100%;
-  background: #C00A0A;
-  position: relative;
-  display: inline-block;
-  color: white;
-  font-family: 'Lato';
-  font-weight: bold;
-  height:89px;
+.quiz-edit-form > label {
+  margin-left: 20%;
 }
 
-.green-submit-button{
+.quiz-edit-form > input {
+  margin-top: -1%;
+  margin-right: 20%;
+  float: right;
+}
+
+#quiz-edit-submit {
+  float: none;
+  margin-top: 5%;
+  margin-left: calc(50% - 65px);
   background-color:#44c767;
   -moz-border-radius:28px;
   -webkit-border-radius:28px;
@@ -90,43 +153,9 @@
   display:inline-block;
   cursor:pointer;
   color:#ffffff;
-  font-family:Arial;
+  font-family:'Lato';
   font-size:17px;
   padding:16px 31px;
   text-decoration:none;
   text-shadow:0px 1px 0px #2f6627;
-}
-
-.red-delete-answer{
-          background-color:red;
-         -moz-border-radius:28px;
-         -webkit-border-radius:28px;
-         border-radius:28px;
-         border:1px solid #18ab29;
-         display:inline-block;
-         margin-bottom:10px;
-         cursor:pointer;
-         color:#ffffff;
-         font-family:Arial;
-         font-size:12px;
-         padding:5px 5px;
-         text-decoration:none;
-         text-shadow:0px 1px 0px #2f6627;
-}
-
-.green-edit{
-          background-color:#44c767;
-         -moz-border-radius:28px;
-         -webkit-border-radius:28px;
-         border-radius:28px;
-         border:1px solid #18ab29;
-         display:inline-block;
-         margin-bottom:10px;
-         cursor:pointer;
-         color:#ffffff;
-         font-family:Arial;
-         font-size:12px;
-         padding:5px 5px;
-         text-decoration:none;
-         text-shadow:0px 1px 0px #2f6627;
 }
