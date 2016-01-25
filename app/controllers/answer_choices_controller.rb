@@ -6,8 +6,17 @@ class AnswerChoicesController < ApplicationController
       @question = Question.find(params[:question_id])
 
       if @answer_choice.save
-        if @answer_choice.answer_id == @question.correct_answer_id || @answer_choice.answer_text == @question.correct_answer.text
+        if @answer_choice.answer_id == @question.correct_answer_id
           render :correct_answer
+        elsif @answer_choice.answer_text == @question.correct_answer.text
+          @answer_choice.answer_id = @question.correct_answer.id
+          @answer_choice.save
+          render :correct_answer
+        elsif @answer_choice.answer_id == nil
+          db_answer = Answer.find_by(question_id: @question.id, text: "incorrect answer")
+          @answer_choice.answer_id = db_answer.id
+          @answer_choice.save
+          render :incorrect_answer
         else
           render :incorrect_answer
         end
