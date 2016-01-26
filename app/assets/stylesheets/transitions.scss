@@ -1,16 +1,45 @@
 .reveal-answer-appear {
   max-height: 0;
-  overflow: hidden;
   opacity: 0;
+  overflow: hidden;
 
-  -webkit-transition: all 1s;
-     -moz-transition: all 1s;
-      -ms-transition: all 1s;
-       -o-transition: all 1s;
-          transition: all 1s;
+  -webkit-transition: all .6s ease;
+     -moz-transition: all .6s ease;
+      -ms-transition: all .6s ease;
+       -o-transition: all .6s ease;
+          transition: all .6s ease;
 }
 
 .reveal-answer-appear.reveal-answer-appear-active {
   max-height: 100px;
+  opacity: 1;
+}
+
+.start-button-leave {
+  opacity: 1;
+  max-height: 300px;
+  -webkit-transition: all .6s ease;
+     -moz-transition: all .6s ease;
+      -ms-transition: all .6s ease;
+       -o-transition: all .6s ease;
+          transition: all .6s ease;
+}
+
+.start-button-leave.start-button-leave-active {
+  opacity: .01;
+  max-height: 0;
+}
+
+.quiz-body-enter {
+  opacity: 0;
+
+  -webkit-transition: all 1s ease;
+     -moz-transition: all 1s ease;
+      -ms-transition: all 1s ease;
+       -o-transition: all 1s ease;
+          transition: all 1s ease;
+}
+
+.quiz-body-enter.quiz-body-enter-active {
   opacity: 1;
 }

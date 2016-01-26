@@ -1,3 +1,82 @@
-// Place all the styles related to the Questions controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+.answer-choice {
+  position: relative;
+  padding: 2px;
+  width: 300px;
+
+  -webkit-transition: all .2s;
+     -moz-transition: all .2s;
+      -ms-transition: all .2s;
+       -o-transition: all .2s;
+          transition: all .2s;
+}
+
+.answer-choice:hover {
+  background: #ffff9e;
+}
+
+.answer-body {
+  padding-left: 30px;
+}
+
+.answer-choice label {
+  padding-left: 5px;
+}
+
+.feedback {
+  position: relative;
+}
+
+.mark {
+  padding-right: 10px;
+  font-size: 40px;
+}
+
+.mark.correct {
+  color: #33cc33;
+}
+
+.mark.incorrect {
+  color: #C00A0A;
+}
+
+.green-color {
+  color: #33cc33;
+}
+
+.red-color {
+  color: #C00A0A;
+}
+
+.submit-button {
+  color: white;
+  display: inline-block;
+  background: #1485CC;
+  border-radius: 2px;
+  padding: 10px;
+}
+
+.correct {
+  font-weight: bold;
+  color: #33cc33;
+}
+
+.incorrect {
+  font-weight: bold;
+  color: #C00A0A;
+}
+
+.explanation {
+  font-style: italic;
+}
+
+.question {
+  font-size: 24px;
+  border-top: 1px solid #ddd;
+  padding-top: 50px;
+}
+
+.fill-in-the-blank-answer {
+  width: 150px;
+  margin-left: 10px;
+  border-bottom: 1px solid black;
+}

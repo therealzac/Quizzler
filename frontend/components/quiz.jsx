@@ -4,19 +4,22 @@ var QuestionResultStore = require('../stores/questionResultStore');
 var Question = require('./question.jsx');
 var ApiUtil = require('../apiUtil/apiUtil.js');
 var UserQuizStore = require('../stores/userQuizStore');
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+window.QuizTour = require('./shepherd/quizTour.js');
 
 var Quiz = React.createClass({
   getInitialState: function () {
     return {
-      startButtonClass: "start-button",
+      startButtonShowing: true,
+      userQuiz: UserQuizStore.all(),
       quizOpen: false,
       quiz: QuizStore.quiz(),
       questionResults: {},
-      userQuiz: null
+      questionsAnswered: 0
      };
   },
   handleClick: function () {
-    this.setState({ startButtonClass: "hidden", quizOpen: true });
+    this.setState({ startButtonShowing: false, quizOpen: true });
     ApiUtil.createUserQuiz(this.state.quiz.id);
   },
   componentDidMount: function() {
@@ -25,6 +28,7 @@ var Quiz = React.createClass({
     this.userQuizListener = UserQuizStore.addListener(this._userQuizChange);
     ApiUtil.fetchUserQuiz(1);
     ApiUtil.fetchAllQuestionResults(1);
+    window.QuizTour.start();
   },
   componentWillUnmount: function() {
     this.quizListener.remove();
@@ -52,50 +56,85 @@ var Quiz = React.createClass({
       })
     }
   },
-  // _onChange: function() {
-  //   var quiz = QuizStore.quiz();
-  //   var questionResults = QuestionResultStore.all();
-  //   var userQuiz = UserQuizStore.all();
+  incrementQuestionsAnswered: function () {
+    this.setState({ questionsAnswered: this.state.questionsAnswered + 1 })
+  },
+  // renderQuiz: function () {
+  //   var that = this;
   //
-  //   this.setState({
-  //     quiz: quiz,
-  //     questionResults: questionResults,
-  //     userQuiz: userQuiz
-  //   });
-  //
-  //   if (userQuiz.startTime) {
-  //     this.setState({
-  //       startButtonClass: "hidden",
-  //       quizOpen: true
-  //     })
+  //   if (Object.keys(this.state.userQuiz).length > 0) {
+  //     return "";
+  //   } else {
+  //     return (this.state.quiz.questions.map(function (question, idx) {
+  //       return (
+  //         <div key={idx}>
+  //           <Question number={idx + 1}
+  //                     question={question}
+  //                     questionsAnswered={that.state.questionsAnswered}
+  //                     incrementQuestionsAnswered={that.incrementQuestionsAnswered}
+  //                     id={"question" + idx}/>
+  //         </div>
+  //       )
+  //     }));
   //   }
   // },
-  renderQuiz: function () {
-    if (!this.state.quizOpen){
-      return "";
-    } else {
-      return (this.state.quiz.questions.map(function (question, idx) {
-        return (
-          <div key={idx}>
-            <Question number={idx + 1} question={question}/>
-          </div>
-        )
-      }));
-    }
-  },
   render: function () {
+    var that = this;
+    var startButton;
+    var quizBody;
+
+    if (Object.keys(this.state.userQuiz).length === 0) {
+      startButton = (
+        <div key="start-button-wrapper">
+          <div className="start-button"
+               onClick={this.handleClick}>
+            <span className="start-text">start</span>
+            <span className="start-icon"><i className="fa fa-angle-double-right"></i></span>
+          </div>
+        </div>
+      )
+    } else {
+      startButton = (<div></div>)
+    };
+
+    if (!this.state.quizOpen) {
+      quizBody = (<div></div>)
+    } else {
+      quizBody = (
+        <div key="quiz-body" className="quiz">
+          {this.state.quiz.questions.map(function (question, idx) {
+            return (
+              <div key={idx}>
+                <Question number={idx + 1}
+                          question={question}
+                          questionsAnswered={that.state.questionsAnswered}
+                          incrementQuestionsAnswered={that.incrementQuestionsAnswered} />
+              </div>
+            )
+          })}
+        </div>
+      );
+    };
+
     return (
-      <div>
-        <div className="quiz-title">
-          <h3>{this.state.quiz.title}</h3>
-        </div>
+      <div className="background">
+        <div className="quiz-body-wrapper">
+          <div className="quiz-title">
+            <h3>{this.state.quiz.title}</h3>
+          </div>
 
-        <div className={this.state.startButtonClass}>
-          <img onClick={this.handleClick} src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQsqoVToJaalEM8Uq1E-P5AolKGr5NmPx1tuzUs-Nw4CNL0K0Vf"/>
-        </div>
+          <ReactCSSTransitionGroup transitionName="start-button"
+                                   transitionEnterTimeout={0}
+                                   transitionLeaveTimeout={0}>
+            { startButton }
+          </ReactCSSTransitionGroup>
 
-        <div className="quiz">
-          {this.renderQuiz()}
+          <ReactCSSTransitionGroup transitionName="quiz-body"
+                                   transitionEnterTimeout={0}
+                                   transitionLeaveTimeout={0}>
+            { quizBody }
+          </ReactCSSTransitionGroup>
+
         </div>
       </div>
     )

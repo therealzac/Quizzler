@@ -13,6 +13,9 @@ var Question = React.createClass({
   },
   componentDidMount: function() {
     this.questionResultStoreListener = QuestionResultStore.addListener(this._onChange);
+    if (window.QuizTour.currentStep && window.QuizTour.currentStep.id === 'start-button') {
+      window.QuizTour.next();
+    }
   },
   componentWillUnmount: function() {
     this.questionResultStoreListener.remove();
@@ -40,7 +43,7 @@ var Question = React.createClass({
     return (
       that.props.question.answers.map(function(answer, idx) {
         return (
-          <div key={idx}>
+          <div className="answer-choice" key={idx}>
             <input
               id={answer.id}
               className="multiple-choice-answer"
@@ -60,7 +63,7 @@ var Question = React.createClass({
     return (
       that.props.question.answers.map(function(answer, idx) {
         return (
-          <div key={idx}>
+          <div className="answer-choice" key={idx}>
             <input
               id={answer.id}
               className="multiple-choice-answer"
@@ -77,7 +80,8 @@ var Question = React.createClass({
   },
   fillInTheBlankAnswerBody: function() {
     return (
-      <div>
+      <div className="answer-choice">
+        <i className="fa fa-pencil"></i>
         <input
           id={"fill-in-the-blank-answer" + this.props.question.id}
           className="fill-in-the-blank-answer"
@@ -113,6 +117,11 @@ var Question = React.createClass({
     }
 
     ApiUtil.submitAnswer(answerParams, this.props.question.id, this.revealAnswer);
+
+    if (this.props.questionsAnswered === 0) {
+      window.QuizTour.next();
+      this.props.incrementQuestionsAnswered();
+    };
   },
   revealAnswer: function (result) {
     this.setState({questionResult: result})
@@ -141,7 +150,8 @@ var Question = React.createClass({
                                    transitionAppearTimeout={0}
                                    transitionEnterTimeout={0}
                                    transitionLeaveTimeout={0}>
-            <div key={this.state.questionResult.correct_answer_id}>
+            <div className="feedback" key={this.state.questionResult.correct_answer_id}>
+              <span className="mark correct"><i className="fa fa-check"></i></span>
               <span className="correct">Correct!</span><br/><br/>
               <span className="explanation">{this.state.questionResult.explanation}</span>
             </div>
@@ -154,9 +164,10 @@ var Question = React.createClass({
                                    transitionAppearTimeout={0}
                                    transitionEnterTimeout={0}
                                    transitionLeaveTimeout={0}>
-            <div key={this.state.questionResult.correct_answer_id}>
+            <div className="feedback" key={this.state.questionResult.correct_answer_id}>
+              <span className="mark incorrect"><i className="fa fa-times"></i></span>
               <span className="incorrect">Incorrect!</span><br/><br/>
-              Correct answer: {this.state.questionResult.correct_answer.text}<br/>
+              <span className="green-color">Correct answer: {this.state.questionResult.correct_answer.text}</span><br/>
               <span className="explanation">{this.state.questionResult.explanation}</span>
             </div>
           </ReactCSSTransitionGroup>

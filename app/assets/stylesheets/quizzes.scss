@@ -3,37 +3,34 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 @import url("https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic");
 
+.background {
+  background: #ddd;
+}
+
 .quiz {
+  font-size: 24;
   font-family: "Lato";
-  padding: 30px 100px 100px 100px;
+  padding: 20px 150px 100px 150px;
+  text-align: left;
+  background: #f7f7f7;
+}
+
+.quiz-body-wrapper {
+  color: #333;
+  background: #f7f7f7;
+  text-align: center;
+  width: calc(100% - 60px);
+  max-width: 1140px;
+  min-height: 100vh;
+  margin: auto;
 }
 
 .quiz-title {
+  display: inline-block;
+  text-align: center;
   font-family: "Lato";
-  font-size: 24px;
-  padding-top: 50px;
+  font-size: 32px;
+  padding-top: 150px;
   padding-left: 100px;
   padding-right: 100px;
-}
-
-.submit-button {
-  color: white;
-  display: inline-block;
-  background: #1485CC;
-  border-radius: 5px;
-  padding: 10px;
-}
-
-.correct {
-  font-weight: bold;
-  color: green;
-}
-
-.incorrect {
-  font-weight: bold;
-  color: #C00A0A;
-}
-
-.explanation {
-  font-style: italic;
 }

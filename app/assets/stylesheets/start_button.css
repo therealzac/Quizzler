@@ -1,10 +1,46 @@
 .start-button {
-  height: 15vw;
-  width: 15vw;
-  margin-top: 50px;
-  margin-left: 40%;
+  height: 300px;
+  width: 300px;
+  overflow: hidden;
+  background: #33cc33;
+  color: white;
+  border-radius: 100%;
+  margin-top: 20px;
+  position: relative;
+
+  margin-left: auto;
+  margin-right: auto;
+
+  -webkit-transition: all .3s ease;
+     -moz-transition: all .3s ease;
+      -ms-transition: all .3s ease;
+       -o-transition: all .3s ease;
+          transition: all .3s ease;
+}
+
+.start-button:hover {
+  cursor: pointer;
+  opacity: .85;
 }
 
 .hidden {
   display: none;
+}
+
+.start-text {
+  position: absolute;
+  top: 120px;
+  left: 70px;
+  font-size: 50px;
+  font-weight: bold;
+  font-family: "Lato";
+}
+
+.start-icon {
+  position: absolute;
+  top: 120px;
+  left: 210px;
+  font-size: 50px;
+  font-weight: bold;
+  font-family: "Lato";
 }

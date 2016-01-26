@@ -1,18 +1,25 @@
 .navbar {
-  position: relative;
+  position: fixed;
   display: inline-block;
   color: white;
   font-family: "Lato";
-  font-weight: bold;
   background: #C00A0A;
   width: 100%;
   height: auto;
+  margin-bottom: -5px;
+  z-index: 100;
+}
+
+.navbar-inner {
+  width: calc(100% - 60px);
+  max-width: 1140px;
+  margin: auto;
 }
 
 .logo {
+  font-weight: bold;
   float: left;
   padding: 30px;
-  padding-left: 100px;
   font-size: 24px;
 }
 
@@ -25,12 +32,12 @@
 .header-right {
   list-style-type: none;
   float: right;
-  padding-right: 100px;
+  padding-right: 30px;
   padding-top: 36px;
 }
 
 .header-right li {
   font-size: 18px;
   display: inline;
-  padding-left: 75px;
+  padding-left: 30px;
 }
