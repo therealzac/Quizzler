@@ -14,8 +14,7 @@ var Quiz = React.createClass({
       userQuiz: UserQuizStore.all(),
       quizOpen: false,
       quiz: QuizStore.quiz(),
-      questionResults: {},
-      questionsAnswered: 0
+      questionResults: {}
      };
   },
   handleClick: function () {
@@ -55,9 +54,6 @@ var Quiz = React.createClass({
         quizOpen: true
       })
     }
-  },
-  incrementQuestionsAnswered: function () {
-    this.setState({ questionsAnswered: this.state.questionsAnswered + 1 })
   },
   // renderQuiz: function () {
   //   var that = this;
@@ -106,9 +102,7 @@ var Quiz = React.createClass({
             return (
               <div key={idx}>
                 <Question number={idx + 1}
-                          question={question}
-                          questionsAnswered={that.state.questionsAnswered}
-                          incrementQuestionsAnswered={that.incrementQuestionsAnswered} />
+                          question={question} />
               </div>
             )
           })}
@@ -120,7 +114,7 @@ var Quiz = React.createClass({
       <div className="background">
         <div className="quiz-body-wrapper">
           <div className="quiz-title">
-            <h3>{this.state.quiz.title}</h3>
+            <h3 className="shepherd-quiz-title">{this.state.quiz.title}</h3>
           </div>
 
           <ReactCSSTransitionGroup transitionName="start-button"

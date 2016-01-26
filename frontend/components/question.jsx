@@ -117,11 +117,7 @@ var Question = React.createClass({
     }
 
     ApiUtil.submitAnswer(answerParams, this.props.question.id, this.revealAnswer);
-
-    if (this.props.questionsAnswered === 0) {
-      window.QuizTour.next();
-      this.props.incrementQuestionsAnswered();
-    };
+    window.QuizTour.next();
   },
   revealAnswer: function (result) {
     this.setState({questionResult: result})

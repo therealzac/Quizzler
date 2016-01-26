@@ -95,6 +95,7 @@ var Navbar = React.createClass({
   },
   closeModal: function() {
     this.setState({ modalOpen: false });
+    window.QuizTour.next();
   },
   render: function () {
     return (
@@ -102,6 +103,7 @@ var Navbar = React.createClass({
         <div className="navbar-inner">
           <div className="logo">App Academy Quizzler</div>
           <ul className="header-right">
+            <li className="shepherd-admin-button"><a href="quizzes/admin_index">Admin</a></li>
             <li>Time remaining: {this.state.quiz.max_time}</li>
             <li>Questions answered: {this.state.questionsAnswered}/{this.state.quiz.number_of_questions}</li>
           </ul>

@@ -24142,6 +24142,7 @@
 	  },
 	  closeModal: function () {
 	    this.setState({ modalOpen: false });
+	    window.QuizTour.next();
 	  },
 	  render: function () {
 	    return React.createElement(
@@ -24158,6 +24159,15 @@
 	        React.createElement(
 	          'ul',
 	          { className: 'header-right' },
+	          React.createElement(
+	            'li',
+	            { className: 'shepherd-admin-button' },
+	            React.createElement(
+	              'a',
+	              { href: 'quizzes/admin_index' },
+	              'Admin'
+	            )
+	          ),
 	          React.createElement(
 	            'li',
 	            null,
@@ -33007,7 +33017,7 @@
 	var ApiUtil = __webpack_require__(229);
 	var UserQuizStore = __webpack_require__(251);
 	var ReactCSSTransitionGroup = __webpack_require__(255);
-	window.QuizTour = __webpack_require__(266);
+	window.QuizTour = __webpack_require__(262);
 
 	var Quiz = React.createClass({
 	  displayName: 'Quiz',
@@ -33018,8 +33028,7 @@
 	      userQuiz: UserQuizStore.all(),
 	      quizOpen: false,
 	      quiz: QuizStore.quiz(),
-	      questionResults: {},
-	      questionsAnswered: 0
+	      questionResults: {}
 	    };
 	  },
 	  handleClick: function () {
@@ -33059,9 +33068,6 @@
 	        quizOpen: true
 	      });
 	    }
-	  },
-	  incrementQuestionsAnswered: function () {
-	    this.setState({ questionsAnswered: this.state.questionsAnswered + 1 });
 	  },
 	  // renderQuiz: function () {
 	  //   var that = this;
@@ -33122,9 +33128,7 @@
 	            'div',
 	            { key: idx },
 	            React.createElement(Question, { number: idx + 1,
-	              question: question,
-	              questionsAnswered: that.state.questionsAnswered,
-	              incrementQuestionsAnswered: that.incrementQuestionsAnswered })
+	              question: question })
 	          );
 	        })
 	      );
@@ -33141,7 +33145,7 @@
 	          { className: 'quiz-title' },
 	          React.createElement(
 	            'h3',
-	            null,
+	            { className: 'shepherd-quiz-title' },
 	            this.state.quiz.title
 	          )
 	        ),
@@ -33333,11 +33337,7 @@
 	    };
 
 	    ApiUtil.submitAnswer(answerParams, this.props.question.id, this.revealAnswer);
-
-	    if (this.props.questionsAnswered === 0) {
-	      window.QuizTour.next();
-	      this.props.incrementQuestionsAnswered();
-	    };
+	    window.QuizTour.next();
 	  },
 	  revealAnswer: function (result) {
 	    this.setState({ questionResult: result });
@@ -34256,7 +34256,110 @@
 	module.exports = ReactTransitionEvents;
 
 /***/ },
-/* 262 */,
+/* 262 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Shepherd = __webpack_require__(263);
+
+	var QuizTour = new Shepherd.Tour({
+	  defaults: {
+	    classes: 'shepherd-theme-arrows'
+	  }
+	});
+
+	QuizTour.addStep('start-button', {
+	  text: ["Welcome to Quizzler! Click the 'Start' button to begin your quiz!"],
+	  buttons: [{
+	    text: 'Next',
+	    action: QuizTour.hide
+	  }],
+	  showCancelLink: true,
+	  advanceOn: '.start-button click',
+	  classes: 'shepherd-theme-arrows',
+	  attachTo: '.start-button right'
+	});
+
+	QuizTour.addStep('question', {
+	  text: ["Fill in your answers, and then click", "'Submit' to get immediate feedback."],
+	  buttons: [{
+	    text: 'Next',
+	    action: QuizTour.next
+	  }],
+	  showCancelLink: true,
+	  classes: 'shepherd-theme-arrows',
+	  attachTo: '.shepherd-quiz-title right'
+	});
+
+	QuizTour.addStep('header', {
+	  text: ["Keep track of how many questions you've", "answered and time remaining here."],
+	  buttons: [{
+	    text: 'Back',
+	    action: QuizTour.back
+	  }, {
+	    text: 'Next',
+	    action: QuizTour.next
+	  }],
+	  showCancelLink: true,
+	  classes: 'shepherd-theme-arrows',
+	  attachTo: '.header-right bottom'
+	});
+
+	QuizTour.addStep('header2', {
+	  text: ["Your quiz will automatically end after you", "answer every question or time runs out."],
+	  buttons: [{
+	    text: 'Back',
+	    action: QuizTour.back
+	  }, {
+	    text: 'Next',
+	    action: QuizTour.next
+	  }],
+	  showCancelLink: true,
+	  classes: 'shepherd-theme-arrows',
+	  attachTo: '.header-right bottom'
+	});
+
+	QuizTour.addStep('quiz-ending', {
+	  text: ["Go ahead and complete the quiz now.", "Good luck!"],
+	  buttons: [{
+	    text: 'Back',
+	    action: QuizTour.back
+	  }, {
+	    text: 'Finish',
+	    action: QuizTour.hide
+	  }],
+	  showCancelLink: true,
+	  classes: 'shepherd-theme-arrows',
+	  attachTo: '.header-right bottom'
+	});
+
+	QuizTour.addStep('modal-close', {
+	  text: ["Create and edit tests here."],
+	  buttons: [{
+	    text: 'Next',
+	    action: QuizTour.next
+	  }],
+	  showCancelLink: true,
+	  classes: 'shepherd-theme-arrows',
+	  attachTo: '.shepherd-admin-button bottom'
+	});
+
+	QuizTour.addStep('add-quiz', {
+	  text: ["Create a new quiz"],
+	  buttons: [{
+	    text: 'Back',
+	    action: QuizTour.back
+	  }, {
+	    text: 'Next',
+	    action: QuizTour.hide
+	  }],
+	  showCancelLink: true,
+	  classes: 'shepherd-theme-arrows',
+	  attachTo: '.admin-nav right'
+	});
+
+	module.exports = QuizTour;
+
+/***/ },
 /* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -36628,77 +36731,6 @@
 
 	}));
 
-
-/***/ },
-/* 265 */,
-/* 266 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Shepherd = __webpack_require__(263);
-
-	var QuizTour = new Shepherd.Tour({
-	  defaults: {
-	    classes: 'shepherd-theme-arrows'
-	  }
-	});
-
-	QuizTour.addStep('start-button', {
-	  text: ["Welcome to Quizzler! Click the 'Start' button to begin your quiz!"],
-	  buttons: [{
-	    text: 'Next',
-	    action: QuizTour.hide
-	  }],
-	  showCancelLink: true,
-	  advanceOn: '.start-button click',
-	  classes: 'shepherd-theme-arrows',
-	  attachTo: '.start-button right'
-	});
-
-	QuizTour.addStep('question', {
-	  text: ["Fill in your answers, and then click 'Submit' to get immediate feedback."],
-	  buttons: [{
-	    text: 'Next',
-	    action: QuizTour.next
-	  }],
-	  showCancelLink: true,
-	  classes: 'shepherd-theme-arrows',
-	  attachTo: '.quiz-title bottom'
-	});
-
-	QuizTour.addStep('header', {
-	  text: ["Keep track of how many questions you've answered and time remaining here."],
-	  buttons: [{
-	    text: 'Next',
-	    action: QuizTour.next
-	  }],
-	  showCancelLink: true,
-	  classes: 'shepherd-theme-arrows',
-	  attachTo: '.header-right bottom'
-	});
-
-	QuizTour.addStep('quiz-ending', {
-	  text: ["Your quiz will automatically end after you answer every question or time runs out."],
-	  buttons: [{
-	    text: 'Next',
-	    action: QuizTour.next
-	  }],
-	  showCancelLink: true,
-	  classes: 'shepherd-theme-arrows',
-	  attachTo: '.header-right bottom'
-	});
-
-	QuizTour.addStep('quiz-ending', {
-	  text: ["Go ahead and complete the quiz now. Good luck!"],
-	  buttons: [{
-	    text: 'Finish',
-	    action: QuizTour.next
-	  }],
-	  showCancelLink: true,
-	  classes: 'shepherd-theme-arrows',
-	  attachTo: '.header-right bottom'
-	});
-
-	module.exports = QuizTour;
 
 /***/ }
 /******/ ]);
